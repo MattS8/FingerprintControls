@@ -39,10 +39,10 @@ class FeedbackBottomSheet : BottomSheetDialogFragment() {
             feedbackType = TYPE_BUG
         }
         btnSend.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SENDTO)
+            val intent = Intent(Intent.ACTION_SEND)
             intent.data = Uri.parse("mailto:")
             intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_EMAIL, arrayListOf("Matthew.steinhardt@gmail.com"))
+            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("Matthew.steinhardt@gmail.com"))
             intent.putExtra(Intent.EXTRA_TEXT, etInput.text.toString())
             if (feedbackType == TYPE_SUGGESTION) {
                 intent.putExtra(Intent.EXTRA_SUBJECT, "[Fingerprint Controls] - Suggestion")
@@ -59,12 +59,14 @@ class FeedbackBottomSheet : BottomSheetDialogFragment() {
         inputLayout.animate()
                 .translationY(inputLayout.height.toFloat())
                 .alpha(1.0f)
+                .setDuration(200)
                 .setListener(null)
         btnSuggestFeature.visibility = View.VISIBLE
         btnSend.visibility = View.VISIBLE
         btnSend.animate()
                 .translationY(btnSend.height.toFloat())
                 .alpha(1.0f)
+                .setDuration(200)
                 .setListener(null)
         inputVisible = true
     }

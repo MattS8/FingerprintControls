@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.Path
 import android.preference.PreferenceManager
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
@@ -18,26 +19,33 @@ class FingerprintService : AccessibilityService() {
     private var gestureDetectionAvailable : Boolean = false
     private var recentsShown: Boolean = false
 
-    private var displayMetrics = resources.displayMetrics
-    private var middleYValue = displayMetrics.heightPixels / 2
-    private var leftSideOfScreen = displayMetrics.widthPixels / 4
-    private var rightSideOfScreen = leftSideOfScreen * 3
-    private var middleXValue = displayMetrics.widthPixels / 2
-    private var bottomSideOfScreen = middleYValue * 3
+    private lateinit var displayMetrics: DisplayMetrics
+    private var middleYValue: Int = 0
+    private var leftSideOfScreen: Int = 0
+    private var rightSideOfScreen: Int = 0
+    private var middleXValue: Int = 0
+    private var bottomSideOfScreen: Int = 0
     override fun onInterrupt() {}
 
     override fun onAccessibilityEvent(p0: AccessibilityEvent?) {}
 
     override fun onCreate() {
-        Log.d("DEBUG", "onCreate was called!")
-        gestureController = fingerprintGestureController
-        gestureDetectionAvailable = gestureController.isGestureDetectionAvailable
+        Log.d("DEBUG-S", "onCreate was called!")
     }
 
     override fun onServiceConnected() {
-        Log.d("DEBUG", "onServiceConnected was called!")
+        Log.d("DEBUG-S", "onServiceConnected was called!")
         if (fingerprintCallback != null || !gestureDetectionAvailable)
             return
+
+        gestureController = fingerprintGestureController
+        gestureDetectionAvailable = gestureController.isGestureDetectionAvailable
+        displayMetrics = resources.displayMetrics
+        middleYValue = displayMetrics.heightPixels / 2
+        rightSideOfScreen = leftSideOfScreen * 3
+        middleXValue = displayMetrics.widthPixels / 2
+        bottomSideOfScreen = middleYValue * 3
+        leftSideOfScreen = displayMetrics.widthPixels / 4
 
         fingerprintCallback = object : FingerprintGestureController.FingerprintGestureCallback() {
             override fun onGestureDetectionAvailabilityChanged(available: Boolean) {

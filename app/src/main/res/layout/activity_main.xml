@@ -8,7 +8,7 @@
     android:id="@+id/main_frame">
 
     <Switch
-        android:id="@+id/enabledControls"
+        android:id="@+id/toggleControls"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -24,7 +24,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Switch
-        android:id="@+id/enabledAdvancedControls"
+        android:id="@+id/toggleControlsAdvanced"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -52,7 +52,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enabledControls"
+        app:layout_constraintTop_toBottomOf="@+id/toggleControls"
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
@@ -63,10 +63,10 @@
         android:layout_marginEnd="8dp"
         android:text="@string/gestures"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/enabledControls"
+        app:layout_constraintEnd_toEndOf="@+id/toggleControls"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/enabledControls"
-        app:layout_constraintTop_toBottomOf="@+id/enabledControls"
+        app:layout_constraintStart_toStartOf="@+id/toggleControls"
+        app:layout_constraintTop_toBottomOf="@+id/toggleControls"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -76,10 +76,9 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
-        android:fontFamily="@font/roboto_light"
         android:text="@string/swipe_up_recent_apps_overview_nswipe_down_home_nswipe_left_back"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/enabledControls"
+        app:layout_constraintEnd_toEndOf="@+id/toggleControls"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tvGesture"
         app:layout_constraintTop_toBottomOf="@+id/tvGesture"
@@ -93,10 +92,10 @@
         android:layout_marginEnd="8dp"
         android:text="@string/changes_the_function_of_swipe_gestures_when_the_recent_apps_overview_is_being_shown"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/enabledAdvancedControls"
+        app:layout_constraintEnd_toEndOf="@+id/toggleControlsAdvanced"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/enabledAdvancedControls"
-        app:layout_constraintTop_toBottomOf="@+id/enabledAdvancedControls"
+        app:layout_constraintStart_toStartOf="@+id/toggleControlsAdvanced"
+        app:layout_constraintTop_toBottomOf="@+id/toggleControlsAdvanced"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -105,7 +104,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
-        android:fontFamily="@font/roboto_light"
         android:text="@string/swipe_down_select_app_nswipe_left_scroll_to_the_left_nswipe_right_scroll_to_the_right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tvAdvancedGestures"

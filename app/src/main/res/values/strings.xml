@@ -21,4 +21,5 @@
     <string name="send_feedback_chooser">Send Feedback...</string>
     <string name="feedback_sent">Thanks for your feedback!</string>
     <string name="err_feedback">There was an issue sending your feedback. Please try again</string>
+    <string name="feedback_type_question">What type of feedback would you like to give?</string>
 </resources>

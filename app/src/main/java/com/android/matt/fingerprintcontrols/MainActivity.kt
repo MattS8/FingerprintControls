@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), ServiceConnection{
     private var serviceEnabled = false
     private var feedbackSheet : FeedbackBottomSheet? = null
+    private var service : FingerprintService? = null
 
     override fun onServiceDisconnected(p0: ComponentName?) {
         serviceEnabled = false
@@ -33,36 +34,35 @@ class MainActivity : AppCompatActivity(), ServiceConnection{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        this.toggleControlsAdvanced.isEnabled = advancedControlsEnabled()
-        this.toggleControls.isEnabled = controlsEnabled()
+        service = FingerprintService.getServiceObject()
+        this.toggleControls.isChecked = isControlsEnabled()
+        this.toggleControlsAdvanced.isEnabled = isAdvancedControlsEnabled()
         this.toggleControls.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 Log.d("DEBUG", "Enable_Controls Toggle was SELECTED")
                 requestPermissions(arrayOf(Manifest.permission.USE_FINGERPRINT), REQ_FINGERPRINT)
                 Snackbar.make(this.main_frame, R.string.controls_enabled, Snackbar.LENGTH_SHORT)
                         .show()
-//                if (!serviceEnabled) {
-//                    Log.d("DEBUG", "Service is not starting...")
-//                }
             } else {
                 Log.d("DEBUG", "Enable_Controls Toggle was DESELECTED")
                 this.toggleControlsAdvanced.isEnabled = false
                 setControlsEnabled(false)
                 Log.d("DEBUG", "Service is being stopped")
-                val intent = Intent(this, FingerprintService::class.java)
-                stopService(intent)
+                stopService(Intent(this, FingerprintService::class.java))
+                unbindService(this)
+                if (service != null) {
+                    Log.d("DEBUG", "manually calling onDestroy")
+                    service!!.onDestroy()
+                }
+
                 Snackbar.make(this.main_frame, R.string.controls_disabled, Snackbar.LENGTH_SHORT)
                         .show()
-//                if (serviceEnabled) {
-//                    serviceEnabled = false
-//
-//                }
             }
         }
         this.toggleControlsAdvanced.setOnCheckedChangeListener { _, isChecked ->
             setAdvancedControlsEnabled(isChecked)
             Log.d("DEBUG", "Advanced_Controls toggle was "
-                    + (if (advancedControlsEnabled()) "SELECTED" else "DESELECTED"))
+                    + (if (isAdvancedControlsEnabled()) "SELECTED" else "DESELECTED"))
         }
         this.feedbackButton.setOnClickListener {
             feedbackSheet = FeedbackBottomSheet.newInstance()
@@ -82,42 +82,52 @@ class MainActivity : AppCompatActivity(), ServiceConnection{
 
     override fun onResume() {
         super.onResume()
-        Log.d("DEBUG", "OnResume: " + (if (controlsEnabled()) "Service enabled" else "Service disabled"))
-        val intent = Intent(this, FingerprintService::class.java)
-        bindService(intent, this, Context.BIND_AUTO_CREATE)
+        if (isControlsEnabled()) {
+            Log.d("DEBUG", "OnResume: Service enabled")
+            val intent = Intent(this, FingerprintService::class.java)
+            bindService(intent, this, Context.BIND_AUTO_CREATE)
+            service = FingerprintService.getServiceObject()
+        } else {
+            Log.d("DEBUG", "OnResume: Service disabled")
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        unbindService(this)
+        if (isControlsEnabled()) {
+            Log.d("DEBUG", "OnPause: Unbinding service")
+            unbindService(this)
+        } else {
+            Log.d("DEBUG", "OnPause: No service to unbind")
+        }
     }
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == REQ_FINGERPRINT && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            val fingerprintManager = baseContext.getSystemService(FingerprintManager::class.java)
-            if (fingerprintManager.isHardwareDetected) {
-                Log.d("DEBUG", "Found fingerprint sensor!")
-                val intent = Intent(this, FingerprintService::class.java)
-                startService(intent)
-                setControlsEnabled(true)
-                this.toggleControlsAdvanced.isEnabled = true
-            } else {
-                Log.e("DEBUG", "No fingerprint sensor hardware found")
-                setControlsEnabled(false)
-                this.toggleControls.isEnabled = false
-                this.toggleControlsAdvanced.isEnabled = false
-                Snackbar.make(this.main_frame, R.string.err_no_fp_sensor, Snackbar.LENGTH_LONG).show()
+        when (requestCode) {
+            REQ_FINGERPRINT -> {
+                val fpManager = baseContext.getSystemService(FingerprintManager::class.java)
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && fpManager.isHardwareDetected) {
+                    Log.d("DEBUG", "Found fingerprint sensor!")
+                    val intent = Intent(this, FingerprintService::class.java)
+                    startService(intent)
+                    bindService(intent, this, Context.BIND_AUTO_CREATE)
+                    service = FingerprintService.getServiceObject()
+                    setControlsEnabled(true)
+                    this.toggleControlsAdvanced.isEnabled = true
+                } else {
+                    Log.e("DEBUG", "No fingerprint sensor hardware found")
+                    setControlsEnabled(false)
+                    this.toggleControls.isChecked = false
+                    this.toggleControlsAdvanced.isEnabled = false
+                    Snackbar.make(this.main_frame, R.string.err_enabling, Snackbar.LENGTH_LONG)
+                            .show()
+                }
             }
-        } else {
-            setControlsEnabled(false)
-            this.toggleControls.isEnabled = false
-            this.toggleControlsAdvanced.isEnabled = false
-            Snackbar.make(this.main_frame, R.string.err_perm_denied, Snackbar.LENGTH_LONG).show()
         }
     }
 
-    private fun controlsEnabled() : Boolean {
+    private fun isControlsEnabled() : Boolean {
         return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_CONTROLS, false)
     }
 
@@ -125,7 +135,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection{
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_CONTROLS, enabled).apply()
     }
 
-    private fun advancedControlsEnabled() : Boolean {
+    private fun isAdvancedControlsEnabled() : Boolean {
         return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_ADV_CONTROLS, false)
     }
 

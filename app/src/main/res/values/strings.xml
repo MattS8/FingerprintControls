@@ -6,7 +6,7 @@
     <string name="fingerprint_service">Fingerprint Controls</string>
     <string name="err_perm_denied">Please allow permissions before using this app</string>
     <string name="err_no_fp_sensor">No fingerprint sensor was detected on this device</string>
-    <string name="accessibility_service_description">This service allows for gesturue navigation using the fingerprint sensor.</string>
+    <string name="accessibility_service_description">This service allows for gesture navigation using the fingerprint sensor.</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="gestures">Enables navigation controls using swipe gestures on the fingerprint sensor</string>
     <string name="swipe_up_recent_apps_overview_nswipe_down_home_nswipe_left_back">Swipe Up - Recent Apps Overview\nSwipe Down - Home\nSwipe Left - Back</string>
@@ -22,4 +22,5 @@
     <string name="feedback_sent">Thanks for your feedback!</string>
     <string name="err_feedback">There was an issue sending your feedback. Please try again</string>
     <string name="feedback_type_question">What type of feedback would you like to give?</string>
+    <string name="err_enabling">Couldn\'t enable fingerprint gesture controls</string>
 </resources>

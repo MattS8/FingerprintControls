@@ -14,7 +14,7 @@ import android.view.accessibility.AccessibilityEvent
 
 
 class FingerprintService : AccessibilityService() {
-    private lateinit var gestureController : FingerprintGestureController
+    private var gestureController : FingerprintGestureController? = null
     private var fingerprintCallback : FingerprintGestureController.FingerprintGestureCallback? = null
     private var gestureDetectionAvailable : Boolean = false
     private var recentsShown: Boolean = false
@@ -25,21 +25,32 @@ class FingerprintService : AccessibilityService() {
     private var rightSideOfScreen: Int = 0
     private var middleXValue: Int = 0
     private var bottomSideOfScreen: Int = 0
+
     override fun onInterrupt() {}
 
     override fun onAccessibilityEvent(p0: AccessibilityEvent?) {}
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("DEBUG-S", "onDestroy was called!")
+        gestureController?.unregisterFingerprintGestureCallback(fingerprintCallback)
+        stopSelf()
+    }
+
     override fun onCreate() {
+        super.onCreate()
+        self = this
         Log.d("DEBUG-S", "onCreate was called!")
     }
 
     override fun onServiceConnected() {
         Log.d("DEBUG-S", "onServiceConnected was called!")
+        gestureController = fingerprintGestureController
+        gestureDetectionAvailable = if (gestureController != null) gestureController!!.isGestureDetectionAvailable else false
+
         if (fingerprintCallback != null || !gestureDetectionAvailable)
             return
-
-        gestureController = fingerprintGestureController
-        gestureDetectionAvailable = gestureController.isGestureDetectionAvailable
+        Log.d("DEBUG-S", "Setting up callback")
         displayMetrics = resources.displayMetrics
         middleYValue = displayMetrics.heightPixels / 2
         rightSideOfScreen = leftSideOfScreen * 3
@@ -63,10 +74,11 @@ class FingerprintService : AccessibilityService() {
         }
 
         if (fingerprintCallback != null)
-            gestureController.registerFingerprintGestureCallback(fingerprintCallback, null)
+            gestureController?.registerFingerprintGestureCallback(fingerprintCallback, null)
     }
 
     private fun swipeRight() {
+        Log.d("DEBUG-S", "swipe right detected")
         if (recentsShown && advancedControlsEnabled()) {
             val gestureBuilder = GestureDescription.Builder()
             val path = Path()
@@ -80,6 +92,7 @@ class FingerprintService : AccessibilityService() {
     }
 
     private fun swipeLeft() {
+        Log.d("DEBUG-S", "swipe left detected")
         if (recentsShown && advancedControlsEnabled()) {
             val gestureBuilder = GestureDescription.Builder()
             val path = Path()
@@ -93,10 +106,12 @@ class FingerprintService : AccessibilityService() {
     }
 
     private fun swipeUp() {
+        Log.d("DEBUG-S", "swipe up detected")
         performGlobalAction(GLOBAL_ACTION_RECENTS)
     }
 
     private fun swipeDown() {
+        Log.d("DEBUG-S", "swipe down detected")
         //todo Find out if recent apps are being shown!
         if (recentsShown && advancedControlsEnabled()) {
             val gestureBuilder = GestureDescription.Builder()
@@ -117,5 +132,12 @@ class FingerprintService : AccessibilityService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return Service.START_STICKY
+    }
+
+    companion object {
+        private var self: FingerprintService? = null
+        fun getServiceObject(): FingerprintService? {
+            return self
+        }
     }
 }

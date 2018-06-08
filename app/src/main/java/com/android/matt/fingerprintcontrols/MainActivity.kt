@@ -3,123 +3,69 @@ package com.android.matt.fingerprintcontrols
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Bundle
-import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), ServiceConnection{
-    private var serviceEnabled = false
+class MainActivity : AppCompatActivity() {
     private var feedbackSheet : FeedbackBottomSheet? = null
     private var service : FingerprintService? = null
 
-    override fun onServiceDisconnected(p0: ComponentName?) {
-        serviceEnabled = false
+    private fun toggleControls(isChecked : Boolean) {
+        if (isChecked) {
+            Log.d("DEBUG", "Enable_Controls Toggle was SELECTED")
+            requestPermissions(arrayOf(Manifest.permission.USE_FINGERPRINT), REQ_FINGERPRINT)
+        } else {
+            Log.d("DEBUG", "Enable_Controls Toggle was DESELECTED")
+            setControlsChecked(false)
+            disableAdvancedControlsToggle()
+        }
     }
 
-    override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-        serviceEnabled = true
-        this.toggleControls.isChecked = true
+    private fun showFeedbackDialog() {
+        feedbackSheet = FeedbackBottomSheet.newInstance()
+        feedbackSheet!!.show(supportFragmentManager, feedbackSheet!!.tag)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         service = FingerprintService.getServiceObject()
-        this.toggleControls.isChecked = isControlsEnabled()
-        this.toggleControlsAdvanced.isEnabled = isAdvancedControlsEnabled()
-        this.toggleControls.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Log.d("DEBUG", "Enable_Controls Toggle was SELECTED")
-                requestPermissions(arrayOf(Manifest.permission.USE_FINGERPRINT), REQ_FINGERPRINT)
-                Snackbar.make(this.main_frame, R.string.controls_enabled, Snackbar.LENGTH_SHORT)
-                        .show()
-            } else {
-                Log.d("DEBUG", "Enable_Controls Toggle was DESELECTED")
-                this.toggleControlsAdvanced.isEnabled = false
-                setControlsEnabled(false)
-                Log.d("DEBUG", "Service is being stopped")
-                stopService(Intent(this, FingerprintService::class.java))
-                unbindService(this)
-                if (service != null) {
-                    Log.d("DEBUG", "manually calling onDestroy")
-                    service!!.onDestroy()
-                }
-
-                Snackbar.make(this.main_frame, R.string.controls_disabled, Snackbar.LENGTH_SHORT)
-                        .show()
-            }
-        }
-        this.toggleControlsAdvanced.setOnCheckedChangeListener { _, isChecked ->
-            setAdvancedControlsEnabled(isChecked)
-            Log.d("DEBUG", "Advanced_Controls toggle was "
-                    + (if (isAdvancedControlsEnabled()) "SELECTED" else "DESELECTED"))
-        }
-        this.feedbackButton.setOnClickListener {
-            feedbackSheet = FeedbackBottomSheet.newInstance()
-            feedbackSheet!!.show(supportFragmentManager, feedbackSheet!!.tag)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RES_FEEDBACK) {
-            if (resultCode == Activity.RESULT_OK) {
-                Snackbar.make(main_frame, R.string.feedback_sent, Snackbar.LENGTH_SHORT).show()
-            } else {
-                Snackbar.make(main_frame, R.string.err_feedback, Snackbar.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (isControlsEnabled()) {
-            Log.d("DEBUG", "OnResume: Service enabled")
-            val intent = Intent(this, FingerprintService::class.java)
-            bindService(intent, this, Context.BIND_AUTO_CREATE)
-            service = FingerprintService.getServiceObject()
-        } else {
-            Log.d("DEBUG", "OnResume: Service disabled")
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (isControlsEnabled()) {
-            Log.d("DEBUG", "OnPause: Unbinding service")
-            unbindService(this)
-        } else {
-            Log.d("DEBUG", "OnPause: No service to unbind")
-        }
+        if (!isControlsChecked()) disableAdvancedControlsToggle()
+        this.toggleControls.isChecked = isControlsChecked()
+        this.toggleControlsAdvanced.isChecked = isAdvancedControlsChecked()
+        this.toggleControls.setOnCheckedChangeListener { _, isChecked -> toggleControls(isChecked) }
+        this.toggleControlsAdvanced.setOnCheckedChangeListener { _, isChecked -> setAdvancedControlsChecked(isChecked) }
+        this.feedbackButton.setOnClickListener { showFeedbackDialog() }
     }
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             REQ_FINGERPRINT -> {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Log.w("DEBUG", "Permission denied")
+                    Snackbar.make(this.main_frame, R.string.err_perm_denied, Snackbar.LENGTH_LONG)
+                            .show()
+                    return
+                }
+
                 val fpManager = baseContext.getSystemService(FingerprintManager::class.java)
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && fpManager.isHardwareDetected) {
+                if (fpManager.isHardwareDetected) {
                     Log.d("DEBUG", "Found fingerprint sensor!")
-                    val intent = Intent(this, FingerprintService::class.java)
-                    startService(intent)
-                    bindService(intent, this, Context.BIND_AUTO_CREATE)
-                    service = FingerprintService.getServiceObject()
-                    setControlsEnabled(true)
-                    this.toggleControlsAdvanced.isEnabled = true
+                    setControlsChecked(true)
+                    enableAdvancedControlsToggle()
                 } else {
-                    Log.e("DEBUG", "No fingerprint sensor hardware found")
-                    setControlsEnabled(false)
+                    Log.e("DEBUG", "No fingerprint sensor hardware found or permission denied")
+                    setControlsChecked(false)
                     this.toggleControls.isChecked = false
-                    this.toggleControlsAdvanced.isEnabled = false
+                    disableAdvancedControlsToggle()
                     Snackbar.make(this.main_frame, R.string.err_enabling, Snackbar.LENGTH_LONG)
                             .show()
                 }
@@ -127,20 +73,46 @@ class MainActivity : AppCompatActivity(), ServiceConnection{
         }
     }
 
-    private fun isControlsEnabled() : Boolean {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            RES_FEEDBACK -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    Snackbar.make(main_frame, R.string.feedback_sent, Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(main_frame, R.string.err_feedback, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun enableAdvancedControlsToggle() {
+        this.toggleControlsAdvanced.isEnabled = true
+        this.tvAdvancedGestures.isEnabled = true
+        this.tvAdvancedGestInfo.isEnabled = true
+    }
+
+    private fun disableAdvancedControlsToggle() {
+        this.toggleControlsAdvanced.isEnabled = false
+        this.tvAdvancedGestures.isEnabled = false
+        this.tvAdvancedGestInfo.isEnabled = false
+    }
+
+    private fun isControlsChecked() : Boolean {
         return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_CONTROLS, false)
     }
 
-    private fun setControlsEnabled(enabled : Boolean) {
+    private fun setControlsChecked(enabled : Boolean) {
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_CONTROLS, enabled).apply()
     }
 
-    private fun isAdvancedControlsEnabled() : Boolean {
+    private fun isAdvancedControlsChecked() : Boolean {
         return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_ADV_CONTROLS, false)
     }
 
-    private fun setAdvancedControlsEnabled(enabled : Boolean) {
+    private fun setAdvancedControlsChecked(enabled : Boolean) {
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_ADV_CONTROLS, enabled).apply()
+        Log.d("DEBUG", "Advanced_Controls toggle was "
+                + (if (isAdvancedControlsChecked()) "SELECTED" else "DESELECTED"))
     }
 
     companion object {

@@ -4,7 +4,10 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.FingerprintGestureController
 import android.accessibilityservice.FingerprintGestureController.*
 import android.accessibilityservice.GestureDescription
+import android.app.Activity
+import android.app.ActivityManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.graphics.Path
 import android.preference.PreferenceManager
@@ -19,7 +22,7 @@ class FingerprintService : AccessibilityService() {
     private var gestureController : FingerprintGestureController? = null
     private var fingerprintCallback : FingerprintGestureController.FingerprintGestureCallback? = null
     private var gestureDetectionAvailable : Boolean = false
-    private var recentsShown: Boolean = false
+    private var recentsShown : Boolean = false
 
     private lateinit var displayMetrics: DisplayMetrics
     private var middleYValue: Int = 0
@@ -30,7 +33,7 @@ class FingerprintService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event : AccessibilityEvent) {
         if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || event.className == null) {
-            Log.d("DEBUG-S", "Wrong event")
+            //Log.d("DEBUG-S", "Wrong event")
             return
         }
 
@@ -58,6 +61,7 @@ class FingerprintService : AccessibilityService() {
 
     override fun onServiceConnected() {
         Log.d("DEBUG-S", "onServiceConnected was called!")
+        //activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
         Log.d("DEBUG-S", "Getting display metrics...")
         displayMetrics = resources.displayMetrics
         middleYValue = displayMetrics.heightPixels / 2
@@ -139,12 +143,18 @@ class FingerprintService : AccessibilityService() {
         Log.d("DEBUG-S", "swipe down detected")
         //todo Find out if recent apps are being shown!
         if (recentsShown && isAdvancedControlsEnabled()) {
-            val gestureBuilder = GestureDescription.Builder()
-            val path = Path()
-            path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
-            path.lineTo(middleXValue.toFloat(), middleYValue.toFloat())
-            gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 50))
-            dispatchGesture(gestureBuilder.build(), null, null)
+            val numRecentTasks = 1
+            //todo get the proper number of apps in recent apps view
+            if (numRecentTasks > 0) {
+                val gestureBuilder = GestureDescription.Builder()
+                val path = Path()
+                path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
+                path.lineTo(middleXValue.toFloat(), middleYValue.toFloat())
+                gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 50))
+                dispatchGesture(gestureBuilder.build(), null, null)
+            } else {
+                performGlobalAction(GLOBAL_ACTION_BACK)
+            }
         } else {
             performGlobalAction(GLOBAL_ACTION_HOME)
         }

@@ -23,4 +23,5 @@
     <string name="err_feedback">There was an issue sending your feedback. Please try again</string>
     <string name="feedback_type_question">What type of feedback would you like to give?</string>
     <string name="err_enabling">Couldn\'t enable fingerprint gesture controls</string>
+    <string name="advanced_controls">Advanced Controls</string>
 </resources>

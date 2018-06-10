@@ -55,7 +55,164 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:paddingTop="16dp"
-                app:expansion_headerIndicator="@id/headerIndicator"
+                app:expansion_headerIndicator="@id/imgAdvControlsHeader"
+                app:expansion_layout="@id/elAdvancedControls"
+                app:expansion_toggleOnClick="true">
+
+                <TextView
+                    android:id="@+id/tvGestures"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gesturesTitle"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="@color/colorAccent"/>
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:adjustViewBounds="true"
+                    android:id="@+id/imgGesturesHeader"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_width="wrap_content"
+                    android:tint="@color/colorAccent"
+                    app:srcCompat="@drawable/ic_expansion_header_indicator_grey_24dp" />
+            </com.github.florent37.expansionpanel.ExpansionHeader>
+
+            <com.github.florent37.expansionpanel.ExpansionLayout
+                android:id="@+id/elGestures"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                app:expansion_expanded="true">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:id="@+id/tvSwipeLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/swipe_left"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <Spinner
+                        android:id="@+id/spnSwipeLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:entries="@array/gesture_actions"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/tvSwipeRight"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/tvSwipeRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/swipe_right"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/spnSwipeLeft"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <Spinner
+                        android:id="@+id/spnSwipeRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:entries="@array/gesture_actions"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/tvSwipeRight"
+                        app:layout_constraintTop_toTopOf="@+id/tvSwipeRight"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/tvSwipeUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/swipe_up"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/spnSwipeRight"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <Spinner
+                        android:id="@+id/spnSwipeUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:entries="@array/gesture_actions"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/tvSwipeRight"
+                        app:layout_constraintTop_toTopOf="@+id/tvSwipeUp"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/tvSwipeDown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/swipe_down"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/spnSwipeUp"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <Spinner
+                        android:id="@+id/spnSwipeDown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:entries="@array/gesture_actions"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/tvSwipeRight"
+                        app:layout_constraintTop_toTopOf="@+id/tvSwipeDown"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                </android.support.constraint.ConstraintLayout>
+
+
+
+
+            </com.github.florent37.expansionpanel.ExpansionLayout>
+
+            <com.github.florent37.expansionpanel.ExpansionHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:paddingTop="16dp"
+                app:expansion_headerIndicator="@id/imgAdvControlsHeader"
                 app:expansion_layout="@id/elAdvancedControls"
                 app:expansion_toggleOnClick="true">
 
@@ -69,7 +226,7 @@
 
                 <android.support.v7.widget.AppCompatImageView
                     android:adjustViewBounds="true"
-                    android:id="@+id/headerIndicator"
+                    android:id="@+id/imgAdvControlsHeader"
                     android:layout_gravity="center_vertical|end"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -94,11 +251,10 @@
                     android:layout_marginTop="8dp">
 
                     <Switch
-                        android:id="@+id/swToggleAdvancedControls"
+                        android:id="@+id/swToggleAdvancedNavigationControls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        android:text="@string/enable_fingerprint_controls"
+                        android:text="@string/enableAdvNav"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -112,7 +268,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:layout_marginEnd="16dp"
-                        android:text="@string/gestures"
+                        android:text="@string/advNavDesc"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"

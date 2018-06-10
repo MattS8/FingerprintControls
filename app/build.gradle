@@ -36,4 +36,5 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
 
     implementation 'com.github.florent37:expansionpanel:1.1.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

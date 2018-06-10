@@ -4,18 +4,21 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.FingerprintGestureController
 import android.accessibilityservice.FingerprintGestureController.*
 import android.accessibilityservice.GestureDescription
-import android.app.Activity
-import android.app.ActivityManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Path
 import android.preference.PreferenceManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import com.android.matt.fingerprintcontrols.MainActivity.Companion.PREF_ADV_CONTROLS
-import com.android.matt.fingerprintcontrols.MainActivity.Companion.PREF_CONTROLS
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_BACK
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_HOME
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_NOTIFICATIONS
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_POWER_MENU
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_QUICK_SETTINGS
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_RECENTS
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.CONFIG
+import com.google.gson.Gson
 
 
 class FingerprintService : AccessibilityService() {
@@ -98,7 +101,7 @@ class FingerprintService : AccessibilityService() {
         if (!isEnabled())
             return
         Log.d("DEBUG-S", "swipe right detected")
-        if (recentsShown && isAdvancedControlsEnabled()) {
+        if (recentsShown && isAdvancedNavEnabled()) {
             Log.d("DEBUG-S", "Advanced swipe right performed")
             val gestureBuilder = GestureDescription.Builder()
             val path = Path()
@@ -107,7 +110,7 @@ class FingerprintService : AccessibilityService() {
             gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
             dispatchGesture(gestureBuilder.build(), null, null)
         } else {
-            // No action for Right swipe atm
+            performAction(getConfig().swipeRightAction)
         }
     }
 
@@ -117,7 +120,7 @@ class FingerprintService : AccessibilityService() {
             return
         }
         Log.d("DEBUG-S", "swipe left detected")
-        if (recentsShown && isAdvancedControlsEnabled()) {
+        if (recentsShown && isAdvancedNavEnabled()) {
             Log.d("DEBUG-S", "Advanced swipe left performed")
             val gestureBuilder = GestureDescription.Builder()
             val path = Path()
@@ -126,7 +129,7 @@ class FingerprintService : AccessibilityService() {
             gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
             dispatchGesture(gestureBuilder.build(), null, null)
         } else {
-            performGlobalAction(GLOBAL_ACTION_BACK)
+            performAction(getConfig().swipeLeftAction)
         }
     }
 
@@ -134,18 +137,16 @@ class FingerprintService : AccessibilityService() {
         if (!isEnabled())
             return
         Log.d("DEBUG-S", "swipe up detected")
-        performGlobalAction(GLOBAL_ACTION_RECENTS)
+        performAction(getConfig().swipeUpAction)
     }
 
     private fun swipeDown() {
         if (!isEnabled())
             return
         Log.d("DEBUG-S", "swipe down detected")
-        //todo Find out if recent apps are being shown!
-        if (recentsShown && isAdvancedControlsEnabled()) {
+        if (recentsShown && isAdvancedNavEnabled()) {
             val numRecentTasks = 1
-            //todo get the proper number of apps in recent apps view
-            if (numRecentTasks > 0) {
+            if (numRecentTasks > 0) { //todo get the proper number of apps in recent apps view
                 val gestureBuilder = GestureDescription.Builder()
                 val path = Path()
                 path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
@@ -156,16 +157,39 @@ class FingerprintService : AccessibilityService() {
                 performGlobalAction(GLOBAL_ACTION_BACK)
             }
         } else {
-            performGlobalAction(GLOBAL_ACTION_HOME)
+            performAction(getConfig().swipeDownAction)
         }
     }
 
-    private fun isEnabled() : Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_CONTROLS, false)
+    private fun performAction(action: Int) {
+        when (action) {
+            ACTION_BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
+            ACTION_HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
+            ACTION_RECENTS -> performGlobalAction(GLOBAL_ACTION_RECENTS)
+            ACTION_NOTIFICATIONS -> performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+            ACTION_POWER_MENU -> performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
+            ACTION_QUICK_SETTINGS -> performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+        }
     }
 
-    private fun isAdvancedControlsEnabled() : Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_ADV_CONTROLS, false)
+    private fun getConfig() : Configuration {
+        val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(CONFIG, Gson().toJson(Configuration()))
+        return Gson().fromJson(configJSON, Configuration::class.java)
+    }
+
+    private fun isEnabled() : Boolean {
+        val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(CONFIG, Gson().toJson(Configuration()))
+        val config = Gson().fromJson(configJSON, Configuration::class.java)
+        return config.isEnabled
+    }
+
+    private fun isAdvancedNavEnabled() : Boolean {
+        val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(CONFIG, Gson().toJson(Configuration()))
+        val config = Gson().fromJson(configJSON, Configuration::class.java)
+        return config.isAdvancedNavEnabled
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

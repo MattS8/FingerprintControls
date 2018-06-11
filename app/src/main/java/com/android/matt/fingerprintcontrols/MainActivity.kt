@@ -3,6 +3,8 @@ package com.android.matt.fingerprintcontrols
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -15,7 +17,6 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_two.*
 
 
@@ -51,83 +52,119 @@ class MainActivity : AppCompatActivity() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         runningConfig = Gson().fromJson(prefs.getString(CONFIG, Gson()
                 .toJson(Configuration())), Configuration::class.java)
-//        if (!isControlsChecked()) disableAdvancedControlsToggle()
-//        this.toggleControls.isChecked = isControlsChecked()
-//        this.toggleControlsAdvanced.isChecked = isAdvancedControlsChecked()
-//        this.toggleControls.setOnCheckedChangeListener { _, isChecked -> toggleControls(isChecked) }
-//        this.toggleControlsAdvanced.setOnCheckedChangeListener { _, isChecked -> setAdvancedControlsChecked(isChecked) }
-//        this.feedbackButton.setOnClickListener { showFeedbackDialog() }
+
         this.feedbackButton.setOnClickListener{showFeedbackDialog()}
         this.spnSwipeLeft.setSelection(runningConfig.swipeLeftAction)
         this.spnSwipeRight.setSelection(runningConfig.swipeRightAction)
         this.spnSwipeUp.setSelection(runningConfig.swipeUpAction)
         this.spnSwipeDown.setSelection(runningConfig.swipeDownAction)
         this.spnSwipeLeft.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, pos: Int, id: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if (pos != runningConfig.swipeLeftAction) {
-                    Log.d("DEBUG", "Swipe Left: New action! (${runningConfig.swipeLeftAction} -> $pos)")
                     runningConfig.swipeLeftAction = pos
                     prefs.edit().remove(CONFIG).putString(CONFIG, Gson().toJson(runningConfig))
                             .apply()
 
-                } else { Log.d("DEBUG", "Swipe Left: Same action selected!") }
+                }
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
         this.spnSwipeRight.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, pos: Int, id: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if (pos != runningConfig.swipeRightAction) {
-                    Log.d("DEBUG", "Swipe Left: New action! (${runningConfig.swipeRightAction} -> $pos)")
                     runningConfig.swipeRightAction = pos
                     prefs.edit().remove(CONFIG).putString(CONFIG,Gson().toJson(runningConfig))
                             .apply()
 
-                } else { Log.d("DEBUG", "Swipe Left: Same action selected!") }
+                }
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
         this.spnSwipeUp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, pos: Int, id: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if (pos != runningConfig.swipeUpAction) {
-                    Log.d("DEBUG", "Swipe Left: New action! (${runningConfig.swipeUpAction} -> $pos)")
                     runningConfig.swipeUpAction = pos
                     prefs.edit().remove(CONFIG).putString(CONFIG, Gson().toJson(runningConfig))
                             .apply()
 
-                } else { Log.d("DEBUG", "Swipe Left: Same action selected!") }
+                }
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
         this.spnSwipeDown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, pos: Int, id: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if (pos != runningConfig.swipeDownAction) {
-                    Log.d("DEBUG", "Swipe Left: New action! (${runningConfig.swipeDownAction} -> $pos)")
                     runningConfig.swipeDownAction = pos
                     prefs.edit().remove(CONFIG).putString(CONFIG, Gson().toJson(runningConfig))
                             .apply()
 
-                } else { Log.d("DEBUG", "Swipe Left: Same action selected!") }
+                }
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
-        this.swToggleAdvancedNavigationControls.isChecked = runningConfig.isAdvancedNavEnabled
+        this.swToggleAdvNavControls.isChecked = runningConfig.isAdvancedNavEnabled
+        this.swToggleControls.isChecked = service != null && runningConfig.isEnabled
+        this.swCloseAppRecents.isChecked = runningConfig.isCloseRecentAppsEnabled
+        this.swCloseAppRecents.isEnabled = runningConfig.isAdvancedNavEnabled
+        this.tvCloseAppRecentsDesc.isEnabled = runningConfig.isAdvancedNavEnabled
         this.swToggleControls.setOnCheckedChangeListener{_, isChecked -> toggleControls(isChecked)}
-        this.swToggleAdvancedNavigationControls
-                .setOnCheckedChangeListener{_, isChecked -> toggleAdvNav(isChecked)}
+        this.swToggleAdvNavControls.setOnCheckedChangeListener{_, isChecked -> toggleAdvNav(isChecked)}
+        this.swCloseAppRecents.setOnCheckedChangeListener{_, isChecked -> toggleCloseAppRecents(isChecked)}
+    }
+
+    override fun onResume() {
+        super.onResume()
+        service = FingerprintService.getServiceObject()
         if (service == null) {
-           this.swToggleControls.isChecked = false
-            //todo notify user to enable accessibility service
-        } else {
-            this.swToggleControls.isChecked = runningConfig.isEnabled
+            AlertDialog.Builder(this, android.R.style.ThemeOverlay_Material_Dialog_Alert)
+                    .setTitle(getString(R.string.alert_title))
+                    .setMessage(getString(R.string.access_desc_short))
+                    .setPositiveButton(getString(R.string.enable), { d, _ -> enable(d) })
+                    .setNegativeButton(getString(R.string.what_this), { dialog, _ -> explain(dialog)})
+                    .setIcon(R.drawable.ic_warning_24dp)
+                    .show()
         }
     }
 
+    private fun explain(dialog: DialogInterface?) {
+        dialog?.dismiss()
+        AlertDialog.Builder(this, android.R.style.ThemeOverlay_Material_Dialog_Alert)
+                .setTitle(getString(R.string.about_accessibility_title))
+                .setMessage(getString(R.string.accessibility_explination))
+                .setPositiveButton(getString(R.string.enable_service), {d,_ -> enable(d)})
+                .setNegativeButton(getString(R.string.no_thanks), {d,_ -> quit(d)})
+                .show()
+    }
+
+    private fun quit(dialog: DialogInterface) {
+        dialog.dismiss()
+    }
+
+    private fun enable(dialog: DialogInterface?) {
+        dialog?.dismiss()
+        val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        startActivityForResult(intent, RES_ACCESSIBILITY)
+    }
+
     private fun toggleAdvNav(checked: Boolean) {
-        prefs
+        if (!checked) {
+            swCloseAppRecents.isChecked = false
+            runningConfig.isCloseRecentAppsEnabled = false
+        }
+        swCloseAppRecents.isEnabled = checked
+        tvCloseAppRecentsDesc.isEnabled = checked
+
+        runningConfig.isAdvancedNavEnabled = checked
+        prefs.edit().remove(CONFIG).putString(CONFIG, Gson().toJson(runningConfig)).apply()
+    }
+
+    private fun toggleCloseAppRecents(checked: Boolean) {
+        runningConfig.isCloseRecentAppsEnabled = checked
+        prefs.edit().remove(CONFIG).putString(CONFIG, Gson().toJson(runningConfig)).apply()
     }
 
     @SuppressLint("MissingPermission")
@@ -160,6 +197,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             RES_FEEDBACK -> {
+                feedbackSheet?.dismiss()
                 if (resultCode == Activity.RESULT_OK) {
                     Snackbar.make(main_frame, R.string.feedback_sent, Snackbar.LENGTH_SHORT).show()
                 } else {
@@ -171,6 +209,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val RES_FEEDBACK = 3
+        const val RES_ACCESSIBILITY = 5
         const val REQ_FINGERPRINT = 8
 
         const val CONFIG = "RUNNING_CONFIG"
@@ -182,5 +221,9 @@ class MainActivity : AppCompatActivity() {
         const val ACTION_NOTIFICATIONS = 4
         const val ACTION_POWER_MENU = 5
         const val ACTION_QUICK_SETTINGS = 6
+        const val ACTION_SCROLL_LEFT = 7
+        const val ACTION_SCROLL_RIGHT = 8
+        const val ACTION_SCROLL_UP = 9
+        const val ACTION_SCROLL_DOWN = 10
     }
 }

@@ -17,6 +17,10 @@ import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_NOTIFI
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_POWER_MENU
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_QUICK_SETTINGS
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_RECENTS
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_SCROLL_DOWN
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_SCROLL_LEFT
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_SCROLL_RIGHT
+import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_SCROLL_UP
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.CONFIG
 import com.google.gson.Gson
 
@@ -51,38 +55,32 @@ class FingerprintService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("DEBUG-S", "onDestroy was called!")
+        gestureController?.unregisterFingerprintGestureCallback(fingerprintCallback)
         self = null
     }
 
     override fun onCreate() {
         super.onCreate()
         self = this
+        startActivity(Intent(applicationContext, MainActivity::class.java))
         Log.d("DEBUG-S", "onCreate was called!")
     }
 
 
 
     override fun onServiceConnected() {
-        Log.d("DEBUG-S", "onServiceConnected was called!")
-        //activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-        Log.d("DEBUG-S", "Getting display metrics...")
         displayMetrics = resources.displayMetrics
         middleYValue = displayMetrics.heightPixels / 2
         leftSideOfScreen = displayMetrics.widthPixels / 4
         middleXValue = displayMetrics.widthPixels / 2
-        Log.d("DEBUG-S", "Display Metrics: \n\tmiddleYValue = $middleYValue\n\tmiddleXValue = $middleYValue\n\tleftSideOfScreen = $leftSideOfScreen")
-
-        Log.d("DEBUG-S", "Finding fingerprint Controller...")
         gestureController = fingerprintGestureController
-        gestureDetectionAvailable = if (gestureController != null)
-            gestureController!!.isGestureDetectionAvailable else false
+        gestureDetectionAvailable = gestureController != null && gestureController!!.isGestureDetectionAvailable
+
         if (fingerprintCallback != null || !gestureDetectionAvailable)
             return
 
         fingerprintCallback = object : FingerprintGestureController.FingerprintGestureCallback() {
-            override fun onGestureDetectionAvailabilityChanged(available: Boolean) {
-                gestureDetectionAvailable = available
-            }
+            override fun onGestureDetectionAvailabilityChanged(available: Boolean) { gestureDetectionAvailable = available }
 
             override fun onGestureDetected(gesture: Int) {
                 when (gesture) {
@@ -93,71 +91,59 @@ class FingerprintService : AccessibilityService() {
                 }
             }
         }
-        Log.d("DEBUG-S", "Registering callback")
         gestureController?.registerFingerprintGestureCallback(fingerprintCallback, null)
     }
 
     private fun swipeRight() {
-        if (!isEnabled())
+        val config = getConfig()
+        if (!config.isEnabled)
             return
-        Log.d("DEBUG-S", "swipe right detected")
-        if (recentsShown && isAdvancedNavEnabled()) {
-            Log.d("DEBUG-S", "Advanced swipe right performed")
-            val gestureBuilder = GestureDescription.Builder()
-            val path = Path()
-            path.moveTo(100f, middleYValue.toFloat())
-            path.rLineTo(middleXValue.toFloat() * 2, 0f)
-            gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
-            dispatchGesture(gestureBuilder.build(), null, null)
+
+        if (recentsShown && config.isAdvancedNavEnabled) {
+            actionScrollRight()
         } else {
-            performAction(getConfig().swipeRightAction)
+            performAction(config.swipeRightAction)
         }
     }
 
     private fun swipeLeft() {
-        if (!isEnabled()) {
-            Log.d("DEBUG-S", "swipe left detected, but not currently enabled!")
+        val config = getConfig()
+        if (!config.isEnabled)
             return
-        }
-        Log.d("DEBUG-S", "swipe left detected")
-        if (recentsShown && isAdvancedNavEnabled()) {
-            Log.d("DEBUG-S", "Advanced swipe left performed")
-            val gestureBuilder = GestureDescription.Builder()
-            val path = Path()
-            path.moveTo((middleXValue.toFloat() * 2) - 100, middleYValue.toFloat())
-            path.lineTo(100f, middleYValue.toFloat())
-            gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
-            dispatchGesture(gestureBuilder.build(), null, null)
+
+        if (recentsShown && config.isAdvancedNavEnabled) {
+            actionScrollLeft()
         } else {
-            performAction(getConfig().swipeLeftAction)
+            performAction(config.swipeLeftAction)
         }
     }
 
     private fun swipeUp() {
-        if (!isEnabled())
+        val config = getConfig()
+        if (!config.isEnabled)
             return
-        Log.d("DEBUG-S", "swipe up detected")
-        performAction(getConfig().swipeUpAction)
+
+        if (recentsShown && config.isAdvancedNavEnabled && config.isCloseRecentAppsEnabled) {
+            actionRemoveRecentApp()
+        } else {
+            performAction(config.swipeUpAction)
+        }
     }
 
     private fun swipeDown() {
-        if (!isEnabled())
+        val config = getConfig()
+        if (!config.isEnabled)
             return
-        Log.d("DEBUG-S", "swipe down detected")
-        if (recentsShown && isAdvancedNavEnabled()) {
+
+        if (recentsShown && config.isAdvancedNavEnabled) {
             val numRecentTasks = 1
             if (numRecentTasks > 0) { //todo get the proper number of apps in recent apps view
-                val gestureBuilder = GestureDescription.Builder()
-                val path = Path()
-                path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
-                path.lineTo(middleXValue.toFloat(), middleYValue.toFloat())
-                gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 50))
-                dispatchGesture(gestureBuilder.build(), null, null)
+                actionTapCenter()
             } else {
                 performGlobalAction(GLOBAL_ACTION_BACK)
             }
         } else {
-            performAction(getConfig().swipeDownAction)
+            performAction(config.swipeDownAction)
         }
     }
 
@@ -169,27 +155,71 @@ class FingerprintService : AccessibilityService() {
             ACTION_NOTIFICATIONS -> performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
             ACTION_POWER_MENU -> performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
             ACTION_QUICK_SETTINGS -> performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+            ACTION_SCROLL_LEFT -> actionScrollLeft()
+            ACTION_SCROLL_RIGHT -> actionScrollRight()
+            ACTION_SCROLL_UP -> actionScrollUp()
+            ACTION_SCROLL_DOWN -> actionScrollDown()
         }
+    }
+
+    private fun actionTapCenter() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
+        path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
+        path.lineTo(middleXValue.toFloat(), middleYValue.toFloat())
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 50))
+        dispatchGesture(gestureBuilder.build(), null, null)
+    }
+
+    private fun actionScrollDown() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
+        path.moveTo(middleXValue.toFloat(), middleYValue.toFloat() / 2)
+        path.rLineTo(0f, middleYValue.toFloat())
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+        dispatchGesture(gestureBuilder.build(), null, null)
+    }
+
+    private fun actionScrollUp() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
+        path.moveTo(middleXValue.toFloat(), (middleYValue.toFloat() * 1.75).toFloat())
+        path.rLineTo(0f, -1*middleYValue.toFloat())
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+        dispatchGesture(gestureBuilder.build(), null, null)
+    }
+
+    private fun actionScrollRight() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
+        path.moveTo(100f, middleYValue.toFloat())
+        path.rLineTo(middleXValue.toFloat() * 2, 0f)
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+        dispatchGesture(gestureBuilder.build(), null, null)
+    }
+
+    private fun actionScrollLeft() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
+        path.moveTo((middleXValue.toFloat() * 2) - 100, middleYValue.toFloat())
+        path.lineTo(100f, middleYValue.toFloat())
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+        dispatchGesture(gestureBuilder.build(), null, null)
+    }
+
+    private fun actionRemoveRecentApp() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
+        path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
+        path.rLineTo(0f, (-.95*middleYValue).toFloat())
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+        dispatchGesture(gestureBuilder.build(), null, null)
     }
 
     private fun getConfig() : Configuration {
         val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(CONFIG, Gson().toJson(Configuration()))
         return Gson().fromJson(configJSON, Configuration::class.java)
-    }
-
-    private fun isEnabled() : Boolean {
-        val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(CONFIG, Gson().toJson(Configuration()))
-        val config = Gson().fromJson(configJSON, Configuration::class.java)
-        return config.isEnabled
-    }
-
-    private fun isAdvancedNavEnabled() : Boolean {
-        val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(CONFIG, Gson().toJson(Configuration()))
-        val config = Gson().fromJson(configJSON, Configuration::class.java)
-        return config.isAdvancedNavEnabled
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

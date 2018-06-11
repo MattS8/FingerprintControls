@@ -13,4 +13,5 @@ class Configuration {
 
     var isEnabled = false
     var isAdvancedNavEnabled = true
+    var isCloseRecentAppsEnabled = false
 }

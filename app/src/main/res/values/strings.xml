@@ -26,18 +26,36 @@
     <string name="advanced_controls">Advanced Controls</string>
     <string name="advNavDesc">While in the recent tasks view, swiping left and right on the fingerprint censor will cycle through the recent tasks. Swiping down will select the highlighted task.</string>
     <string name="enableAdvNav">Enable Advanced Navigation Controls</string>
-    <string name="gesturesTitle">Gestures</string>
+    <string name="gesturesTitle">Gesture Actions</string>
     <string name="swipe_left">Swipe Left</string>
     <string name="swipe_right">Swipe Right</string>
     <string name="swipe_up">Swipe Up</string>
     <string name="swipe_down">Swipe Down</string>
+    <string name="feedback_suggestion">[Fingerprint Controls] - Suggestion</string>
+    <string name="feedback_bug_report">[Fingerprint Controls] - Bug Report</string>
+    <string name="alert_title">Enable Accessibility Settings</string>
+    <string name="about_accessibility_title">About Accessibility Privileges</string>
+    <string name="accessibility_explination">Accessibility services require access to potentially sensitive system features and events. For example, this app must monitor gesture input from the fingerprint sensor and monitor which app is currently in the foreground. This allows the fingerprint gesture commands and navigation while in the recent apps overview to work properly. This does not allow the application to record any personal information (nor does this app do that for any reason).</string>
+    <string name="enable_service">Enable Accessibility Service</string>
+    <string name="enable">Enable</string>
+    <string name="what_this">What\'s this?</string>
+    <string name="access_desc_short">This service must be enabled in Accessibility Settings before you can use it.</string>
+    <string name="no_thanks">No Thanks</string>
+    <string name="err_accessibility_service_disabled">Accessibility service has not been activated.</string>
+    <string name="close_app_on_up">Enable Close App on Swipe Up</string>
+    <string name="close_app_desc">Swiping up while in the recent tasks view will now remove the selected app instead of performing the specified action.</string>
 
     <string-array name="gesture_actions">
+        <item>None</item>
         <item>Back Action</item>
         <item>Home Action</item>
         <item>Recent Apps</item>
         <item>Notifications Action</item>
         <item>Power Menu</item>
         <item>Quick Settings</item>
+        <item>Scroll Left</item>
+        <item>Scroll Right</item>
+        <item>Scroll Up</item>
+        <item>Scroll Down</item>
     </string-array>
 </resources>

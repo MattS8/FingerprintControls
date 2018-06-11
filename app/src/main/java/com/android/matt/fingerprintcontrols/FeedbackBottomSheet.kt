@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.sheet_feedback_type.*
 
@@ -24,7 +25,7 @@ class FeedbackBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         btnSuggestFeature.setOnClickListener {
             if (!inputVisible) {
-                showFeedbackLayout()
+                showFeedbackLayout(true)
             }
             etInput.setHint(R.string.suggestion_hint)
             etInput.setText("")
@@ -32,42 +33,36 @@ class FeedbackBottomSheet : BottomSheetDialogFragment() {
         }
         btnReportBug.setOnClickListener {
             if (!inputVisible) {
-                showFeedbackLayout()
+                showFeedbackLayout(false)
             }
             etInput.setHint(R.string.report_bug_hint)
             etInput.setText("")
             feedbackType = TYPE_BUG
         }
         btnSend.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.data = Uri.parse("mailto:")
-            intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("Matthew.steinhardt@gmail.com"))
-            intent.putExtra(Intent.EXTRA_TEXT, etInput.text.toString())
-            if (feedbackType == TYPE_SUGGESTION) {
-                intent.putExtra(Intent.EXTRA_SUBJECT, "[Fingerprint Controls] - Suggestion")
-            } else {
-                intent.putExtra(Intent.EXTRA_SUBJECT, "[Fingerprint Controls] - Bug Report")
-            }
+            val intent = Intent(Intent.ACTION_SENDTO)
+            val uriText = "mailto:" + Uri.encode("Matthew.steinhardt@gmail.com") +
+                    "?subject=" + Uri.encode(if (feedbackType == TYPE_SUGGESTION)
+                getString(R.string.feedback_suggestion) else getString(R.string.feedback_bug_report)) +
+                    "&body=" + Uri.encode(etInput.text.toString())
+            intent.data = Uri.parse(uriText)
             activity?.startActivityForResult(Intent.createChooser(intent, getString(R.string.send_feedback_chooser)), MainActivity.RES_FEEDBACK)
-            hideFeedbackLayout()
         }
     }
 
-    private fun showFeedbackLayout() {
+    private fun showFeedbackLayout(isFeedback: Boolean) {
         inputLayout.visibility = View.VISIBLE
-        inputLayout.animate()
-                .translationY(inputLayout.height.toFloat())
-                .alpha(1.0f)
-                .setDuration(200)
-                .setListener(null)
-        btnSuggestFeature.visibility = View.VISIBLE
         btnSend.visibility = View.VISIBLE
-        btnSend.animate()
-                .translationY(btnSend.height.toFloat())
-                .alpha(1.0f)
-                .setDuration(200)
-                .setListener(null)
+        val x = if (isFeedback) btnSuggestFeature.right else btnReportBug.right
+        val y = if (isFeedback) btnSuggestFeature.bottom else btnReportBug.bottom
+        val startRadius = 0
+        val endRadius = Math.hypot(feedbackSheet.width.toDouble(), feedbackSheet.height.toDouble())
+        ViewAnimationUtils
+                .createCircularReveal(inputLayout, x, y, startRadius.toFloat(), endRadius.toFloat())
+                .start()
+        btnSuggestFeature.visibility = View.GONE
+        btnReportBug.visibility = View.GONE
+        tvFeedbackType.visibility = View.GONE
         inputVisible = true
     }
 

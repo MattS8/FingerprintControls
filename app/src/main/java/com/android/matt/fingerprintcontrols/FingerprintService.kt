@@ -7,6 +7,7 @@ import android.accessibilityservice.GestureDescription
 import android.app.Service
 import android.content.Intent
 import android.graphics.Path
+import android.os.Build
 import android.preference.PreferenceManager
 import android.util.DisplayMetrics
 import android.util.Log
@@ -99,10 +100,16 @@ class FingerprintService : AccessibilityService() {
         if (!config.isEnabled)
             return
 
-        if (recentsShown && config.isAdvancedNavEnabled) {
+        if (!recentsShown || !config.isAdvancedNavEnabled) {
+            performAction(config.swipeRightAction)
+            return
+        }
+
+        //Advanced Nav Code
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             actionScrollRight()
         } else {
-            performAction(config.swipeRightAction)
+            actionTapCenter()
         }
     }
 
@@ -110,12 +117,13 @@ class FingerprintService : AccessibilityService() {
         val config = getConfig()
         if (!config.isEnabled)
             return
-
-        if (recentsShown && config.isAdvancedNavEnabled) {
-            actionScrollLeft()
-        } else {
+        if (!recentsShown || !config.isAdvancedNavEnabled) {
             performAction(config.swipeLeftAction)
+            return
         }
+
+        //Advanced Nav Code
+        actionScrollLeft()
     }
 
     private fun swipeUp() {
@@ -123,11 +131,16 @@ class FingerprintService : AccessibilityService() {
         if (!config.isEnabled)
             return
 
-        if (recentsShown && config.isAdvancedNavEnabled && config.isCloseRecentAppsEnabled) {
-            actionRemoveRecentApp()
-        } else {
+        if (!recentsShown || !config.isAdvancedNavEnabled || !config.isCloseRecentAppsEnabled) {
             performAction(config.swipeUpAction)
+            return
         }
+
+        //Advanced Nav Code
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1)
+            actionRemoveRecentApp()
+        else
+            actionScrollUp()
     }
 
     private fun swipeDown() {
@@ -135,16 +148,24 @@ class FingerprintService : AccessibilityService() {
         if (!config.isEnabled)
             return
 
-        if (recentsShown && config.isAdvancedNavEnabled) {
-            val numRecentTasks = 1
-            if (numRecentTasks > 0) { //todo get the proper number of apps in recent apps view
-                actionTapCenter()
-            } else {
-                performGlobalAction(GLOBAL_ACTION_BACK)
-            }
-        } else {
+        if (!recentsShown || !config.isAdvancedNavEnabled) {
             performAction(config.swipeDownAction)
+            return
         }
+
+        //Advanced Nav Code
+        val numRecentTasks = 1
+        //todo get the proper number of apps in recent apps view
+        @Suppress("ConstantConditionIf")
+        if (numRecentTasks <= 0) {
+            performAction(GLOBAL_ACTION_BACK)
+            return
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1)
+            actionTapCenter()
+        else
+            actionScrollDown()
     }
 
     private fun performAction(action: Int) {
@@ -208,12 +229,16 @@ class FingerprintService : AccessibilityService() {
     }
 
     private fun actionRemoveRecentApp() {
-        val gestureBuilder = GestureDescription.Builder()
-        val path = Path()
-        path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
-        path.rLineTo(0f, (-.95*middleYValue).toFloat())
-        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
-        dispatchGesture(gestureBuilder.build(), null, null)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            val gestureBuilder = GestureDescription.Builder()
+            val path = Path()
+            path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
+            path.rLineTo(0f, (-.95*middleYValue).toFloat())
+            gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+            dispatchGesture(gestureBuilder.build(), null, null)
+        } else {
+            actionScrollRight()
+        }
     }
 
     private fun getConfig() : Configuration {

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="advNavDesc">While in the recent tasks view, swiping up and down on the fingerprint censor will cycle through the recent tasks. Swiping right will select the highlighted task.</string>
+</resources>

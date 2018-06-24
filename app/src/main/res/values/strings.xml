@@ -35,7 +35,7 @@
     <string name="feedback_bug_report">[Fingerprint Controls] - Bug Report</string>
     <string name="alert_title">Enable Accessibility Settings</string>
     <string name="about_accessibility_title">About Accessibility Privileges</string>
-    <string name="accessibility_explination">Accessibility services require access to potentially sensitive system features and events. For example, this app must monitor gesture input from the fingerprint sensor and monitor which app is currently in the foreground. This allows the fingerprint gesture commands and navigation while in the recent apps overview to work properly. This does not allow the application to record any personal information (nor does this app do that for any reason).</string>
+    <string name="accessibility_explination">Accessibility services need access to potentially sensitive system features. For example, this app must monitor gesture input from the fingerprint sensor and determine which app is in the foreground. This allows fingerprint gesture commands and navigation to work properly. This does not allow the application to record any personal information (nor does this app do that for any reason).</string>
     <string name="enable_service">Enable Accessibility Service</string>
     <string name="enable">Enable</string>
     <string name="what_this">What\'s this?</string>

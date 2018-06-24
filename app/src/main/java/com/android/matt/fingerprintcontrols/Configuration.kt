@@ -11,6 +11,7 @@ class Configuration {
     var swipeLeftAction = ACTION_BACK
     var swipeRightAction = ACTION_NONE
 
+    var isUserEnablingService = false
     var isEnabled = false
     var isAdvancedNavEnabled = true
     var isCloseRecentAppsEnabled = false

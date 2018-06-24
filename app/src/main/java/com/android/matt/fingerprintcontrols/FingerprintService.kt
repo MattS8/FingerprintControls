@@ -63,7 +63,12 @@ class FingerprintService : AccessibilityService() {
     override fun onCreate() {
         super.onCreate()
         self = this
-        startActivity(Intent(applicationContext, MainActivity::class.java))
+        val config = getConfig()
+        if (config.isUserEnablingService)
+            startActivity(Intent(applicationContext, MainActivity::class.java))
+        config.isUserEnablingService = false
+        PreferenceManager.getDefaultSharedPreferences(this).edit().remove(CONFIG)
+                .putString(CONFIG, Gson().toJson(config)).apply()
         Log.d("DEBUG-S", "onCreate was called!")
     }
 

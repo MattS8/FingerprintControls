@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.activity_main_two.*
 class MainActivity : AppCompatActivity() {
     private var feedbackSheet : FeedbackBottomSheet? = null
     private var service : FingerprintService? = null
+    private var isASDialogShowing = false
+    private var isASExplainDialogShowing = false
     private lateinit var prefs : SharedPreferences
     private lateinit var  runningConfig : Configuration
 
@@ -119,33 +121,35 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         service = FingerprintService.getServiceObject()
-        if (service == null) {
+        if (service == null && !isASDialogShowing && !isASExplainDialogShowing) {
+            isASDialogShowing = true
             AlertDialog.Builder(this, android.R.style.ThemeOverlay_Material_Dialog_Alert)
                     .setTitle(getString(R.string.alert_title))
                     .setMessage(getString(R.string.access_desc_short))
-                    .setPositiveButton(getString(R.string.enable), { d, _ -> enable(d) })
-                    .setNegativeButton(getString(R.string.what_this), { dialog, _ -> explain(dialog)})
+                    .setPositiveButton(getString(R.string.enable)) { d, _ -> enable(d) }
+                    .setNegativeButton(getString(R.string.what_this)) { dialog, _ -> explain(dialog)}
                     .setIcon(R.drawable.ic_warning_24dp)
+                    .setOnDismissListener { isASDialogShowing = false }
                     .show()
         }
     }
 
     private fun explain(dialog: DialogInterface?) {
         dialog?.dismiss()
+        isASExplainDialogShowing = true
         AlertDialog.Builder(this, android.R.style.ThemeOverlay_Material_Dialog_Alert)
                 .setTitle(getString(R.string.about_accessibility_title))
                 .setMessage(getString(R.string.accessibility_explination))
-                .setPositiveButton(getString(R.string.enable_service), {d,_ -> enable(d)})
-                .setNegativeButton(getString(R.string.no_thanks), {d,_ -> quit(d)})
+                .setPositiveButton(getString(R.string.enable_service)) { d, _ -> enable(d)}
+                .setNegativeButton(getString(R.string.no_thanks)) { d, _ -> d.dismiss()}
+                .setOnDismissListener { isASExplainDialogShowing = false }
                 .show()
-    }
-
-    private fun quit(dialog: DialogInterface) {
-        dialog.dismiss()
     }
 
     private fun enable(dialog: DialogInterface?) {
         dialog?.dismiss()
+        runningConfig.isUserEnablingService = true
+        prefs.edit().remove(CONFIG).putString(CONFIG, Gson().toJson(runningConfig)).apply()
         val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
         startActivityForResult(intent, RES_ACCESSIBILITY)
     }

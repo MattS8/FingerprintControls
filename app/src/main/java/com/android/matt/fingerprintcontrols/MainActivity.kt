@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.fingerprint.FingerprintManager
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         runningConfig = Gson().fromJson(prefs.getString(CONFIG, Gson()
                 .toJson(Configuration())), Configuration::class.java)
 
+        Log.d("DEBUG", "isCloseRecentAppsEnabled = ${runningConfig.isCloseRecentAppsEnabled}")
         this.feedbackButton.setOnClickListener{showFeedbackDialog()}
         this.spnSwipeLeft.setSelection(runningConfig.swipeLeftAction)
         this.spnSwipeRight.setSelection(runningConfig.swipeRightAction)
@@ -110,12 +112,18 @@ class MainActivity : AppCompatActivity() {
         }
         this.swToggleAdvNavControls.isChecked = runningConfig.isAdvancedNavEnabled
         this.swToggleControls.isChecked = service != null && runningConfig.isEnabled
-        this.swCloseAppRecents.isChecked = runningConfig.isCloseRecentAppsEnabled
-        this.swCloseAppRecents.isEnabled = runningConfig.isAdvancedNavEnabled
-        this.tvCloseAppRecentsDesc.isEnabled = runningConfig.isAdvancedNavEnabled
         this.swToggleControls.setOnCheckedChangeListener{_, isChecked -> toggleControls(isChecked)}
         this.swToggleAdvNavControls.setOnCheckedChangeListener{_, isChecked -> toggleAdvNav(isChecked)}
         this.swCloseAppRecents.setOnCheckedChangeListener{_, isChecked -> toggleCloseAppRecents(isChecked)}
+
+        if (Build.VERSION.SDK_INT < 29) {
+            this.swCloseAppRecents.visibility = View.GONE
+            this.tvCloseAppRecentsDesc.visibility = View.GONE
+        } else {
+            this.swCloseAppRecents.isChecked = runningConfig.isCloseRecentAppsEnabled
+            this.swCloseAppRecents.isEnabled = runningConfig.isAdvancedNavEnabled
+            this.tvCloseAppRecentsDesc.isEnabled = runningConfig.isAdvancedNavEnabled
+        }
     }
 
     override fun onResume() {

@@ -24,7 +24,7 @@
     <string name="feedback_type_question">What type of feedback would you like to give?</string>
     <string name="err_enabling">Couldn\'t enable fingerprint gesture controls</string>
     <string name="advanced_controls">Advanced Controls</string>
-    <string name="advNavDesc">While in the recent tasks view, swiping up and down on the fingerprint censor will cycle through the recent tasks. Swiping right will select the highlighted task.</string>
+    <string name="advNavDesc">While in the recent tasks view, swiping up and down on the fingerprint censor will cycle through the recent tasks. Swiping left will select the highlighted task.</string>
     <string name="enableAdvNav">Enable Advanced Navigation Controls</string>
     <string name="gesturesTitle">Gesture Actions</string>
     <string name="swipe_left">Swipe Left</string>

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Path
 import android.os.Build
 import android.preference.PreferenceManager
+import android.support.v4.view.ViewCompat
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -114,7 +115,7 @@ class FingerprintService : AccessibilityService() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             actionScrollRight()
         } else {
-            actionTapCenter()
+            actionRemoveRecentApp()
         }
     }
 
@@ -128,7 +129,10 @@ class FingerprintService : AccessibilityService() {
         }
 
         //Advanced Nav Code
-        actionScrollLeft()
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1)
+            actionScrollLeft()
+        else
+            actionTapCenter()
     }
 
     private fun swipeUp() {
@@ -234,16 +238,18 @@ class FingerprintService : AccessibilityService() {
     }
 
     private fun actionRemoveRecentApp() {
+        val gestureBuilder = GestureDescription.Builder()
+        val path = Path()
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
-            val gestureBuilder = GestureDescription.Builder()
-            val path = Path()
             path.moveTo(middleXValue.toFloat(), middleYValue.toFloat())
             path.rLineTo(0f, (-.95*middleYValue).toFloat())
-            gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
-            dispatchGesture(gestureBuilder.build(), null, null)
         } else {
-            actionScrollRight()
+            path.moveTo(100f, middleYValue.toFloat())
+            path.rLineTo(middleXValue.toFloat() * 2, 0f)
         }
+
+        gestureBuilder.addStroke(GestureDescription.StrokeDescription(path, 0, 200))
+        dispatchGesture(gestureBuilder.build(), null, null)
     }
 
     private fun getConfig() : Configuration {

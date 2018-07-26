@@ -1,5 +1,6 @@
 package com.android.matt.fingerprintcontrols
 
+import android.os.Build
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_BACK
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_HOME
 import com.android.matt.fingerprintcontrols.MainActivity.Companion.ACTION_NONE
@@ -14,5 +15,5 @@ class Configuration {
     var isUserEnablingService = false
     var isEnabled = false
     var isAdvancedNavEnabled = true
-    var isCloseRecentAppsEnabled = false
+    var isCloseRecentAppsEnabled = Build.VERSION.SDK_INT < 29
 }

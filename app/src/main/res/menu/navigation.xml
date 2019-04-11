@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-            android:id="@+id/navigation_home"
+            android:id="@+id/navigation_main_options"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/title_general_actions"/>
+            android:title="@string/title_main_options"/>
 
     <item
-            android:id="@+id/navigation_dashboard"
+            android:id="@+id/navigation_app_actions"
             android:icon="@drawable/ic_dashboard_black_24dp"
             android:title="@string/title_app_actions"/>
 
     <item
-            android:id="@+id/navigation_notifications"
-            android:icon="@drawable/ic_notifications_black_24dp"
-            android:title="@string/title_about"/>
+            android:id="@+id/navigation_about"
+            android:icon="@drawable/ic_help_black_24dp"
+            android:title="@string/title_help"/>
 
 </menu>

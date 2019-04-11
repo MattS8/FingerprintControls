@@ -1,14 +1,16 @@
-package com.android.ms8. fingerprintcontrols
+package com.android.ms8.fingerprintcontrols.data
 
 import android.arch.lifecycle.ViewModel
+import android.content.Context
 import android.databinding.*
-import android.widget.Switch
-import com.android.ms8.fingerprintcontrols.Configuration.Companion.ACTION_BACK
-import com.android.ms8.fingerprintcontrols.Configuration.Companion.ACTION_HOME
-import com.android.ms8.fingerprintcontrols.Configuration.Companion.ACTION_NONE
-import com.android.ms8.fingerprintcontrols.Configuration.Companion.ACTION_RECENTS
-import com.android.ms8.fingerprintcontrols.Configuration.Companion.ACTION_SCROLL_LEFT
-import com.android.ms8.fingerprintcontrols.Configuration.Companion.ACTION_SCROLL_RIGHT
+import com.android.ms8.fingerprintcontrols.ObservableListener
+import com.android.ms8.fingerprintcontrols.R
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_BACK
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_HOME
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_NONE
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_RECENTS
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_LEFT
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_RIGHT
 
 class ConfigurationObservable(config: Configuration?) : ViewModel() {
 
@@ -26,7 +28,6 @@ class ConfigurationObservable(config: Configuration?) : ViewModel() {
 
     var bServiceEnabled = ObservableBoolean().apply { this.set(false) }
     var bRecentActionsEnabled = ObservableBoolean().apply { this.set(true) }
-
 
     init {
         swipeUpAction.set(config?.swipeUpAction ?: ACTION_RECENTS)

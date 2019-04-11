@@ -1,7 +1,11 @@
-package com.android.ms8.fingerprintcontrols.pages
+package com.android.ms8.fingerprintcontrols
 
-import com.android.ms8.fingerprintcontrols.ConfigurationObservable
+import com.android.ms8.fingerprintcontrols.data.ConfigurationObservable
 
 interface FragmentListener {
-    fun getConfiguration() : ConfigurationObservable
+    // Used to link fragment databinding with MainActivity
+    fun getConfiguration() : ConfigurationObservable?
+
+    // Used to tell MainActivity to apply changes to config made by fragment when it's detached
+    fun updateConfig()
 }

@@ -1,8 +1,10 @@
-package com.android.ms8.fingerprintcontrols
+package com.android.ms8.fingerprintcontrols.data
+
+import com.android.ms8.fingerprintcontrols.R
 
 class Configuration(observable: ConfigurationObservable?) {
 
-    var swipeUpAction =  ACTION_RECENTS
+    var swipeUpAction = ACTION_RECENTS
     var swipeDownAction = ACTION_HOME
     var swipeLeftAction = ACTION_BACK
     var swipeRightAction = ACTION_NONE

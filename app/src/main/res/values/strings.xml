@@ -1,6 +1,59 @@
 <resources>
-    <string name="app_name">Fingerprint Controls</string>
-    <string name="title_general_actions">General Actions</string>
+    <string name="app_name">Fingerprint Navigation Controls</string>
+    <string name="title_main_options">Main Options</string>
     <string name="title_app_actions">App Actions</string>
-    <string name="title_about">About</string>
+    <string name="title_help">Help</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_swipe_actions">Default Swipe Actions</string>
+    <string name="swipe_up">Swipe Up</string>
+    <string name="swipe_down">Swipe Down</string>
+    <string name="swipe_left">Swipe Left</string>
+    <string name="swipe_right">Swipe Right</string>
+    <string name="general_options">General Options</string>
+    <string name="enabled">Enabled</string>
+    <string name="service_enabled">Service Enabled</string>
+    <string name="recent_app_actions_enabled">Recent App Actions Enabled</string>
+    <string name="recent_app_actions">Recent App Actions</string>
+    <string name="err_perm_denied">Please grant permissions before using this app</string>
+    <string name="err_enabling">There was a problem enabling the service. Please report this so I can fix it ASAP!
+    </string>
+    <string name="report">report</string>
+    <string name="thanks_for_reporting">Thank\'s for reporting! You rock!</string>
+    <string name="fingerprint_service">Fingerprint Navigation Controls</string>
+    <string name="accessibility_service_description">This service allows for gesture navigation using the fingerprint
+        sensor.
+    </string>
+    <string name="reset_main_options">Reset Main Options</string>
+
+    <string-array name="gesture_actions">
+        <item>None</item>
+        <item>Back Action</item>
+        <item>Home Action</item>
+        <item>Recent Apps</item>
+        <item>Notifications Action</item>
+        <item>Power Menu</item>
+        <item>Quick Settings</item>
+        <item>Scroll Left</item>
+        <item>Scroll Right</item>
+        <item>Scroll Up</item>
+        <item>Scroll Down</item>
+    </string-array>
+
+    <string-array name="gesture_actions_recent">
+        <item>None</item>
+        <item>Scroll Left</item>
+        <item>Scroll Right</item>
+        <item>Select App</item>
+        <item>Previous App</item>
+        <item>Back Action</item>
+        <item>Home Action</item>
+        <item>Scroll Up</item>
+        <item>Scroll Down</item>
+        <item>Notifications Action</item>
+        <item>Power Menu</item>
+        <item>Quick Settings</item>
+        <item>Same as Default Action</item>
+    </string-array>
 </resources>

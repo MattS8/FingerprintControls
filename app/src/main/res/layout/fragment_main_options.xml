@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".GeneralActionsFragment">
+    <TextView
+            android:text="@string/swipe_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_default_swipe_right"
+            app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/spinner_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_left"
+            app:layout_constraintHorizontal_bias="0.0"/>
+    <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
+             app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+             app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_right"
+             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+             app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dropdown"
+             android:id="@+id/spinner_default_swipe_right" android:entries="@array/gesture_actions"
+    >
+
+    </Spinner>
+    <TextView
+            android:text="@string/swipe_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_default_swipe_left"
+            app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/spinner_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_down"
+            app:layout_constraintHorizontal_bias="0.0"/>
+    <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
+             app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+             app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_left"
+             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+             app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dropdown"
+             android:id="@+id/spinner_default_swipe_left" android:entries="@array/gesture_actions"
+    >
+
+    </Spinner>
+    <TextView
+            android:text="@string/default_swipe_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_general_actions" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp" app:layout_constraintHorizontal_bias="0.0"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+
+    <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
+             app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+             app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_up"
+             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+             app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dropdown"
+             android:id="@+id/spinner_default_swipe_up" android:entries="@array/gesture_actions">
+
+    </Spinner>
+    <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
+             app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+             app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_down"
+             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+             app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dropdown"
+             android:id="@+id/spinner_default_swipe_down" android:entries="@array/gesture_actions"
+    >
+
+    </Spinner>
+    <TextView
+            android:text="@string/swipe_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_default_swipe_down" app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/spinner_vertical_margin"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_up"
+            app:layout_constraintHorizontal_bias="0.0"/>
+    <TextView
+            android:text="@string/swipe_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_default_swipe_up" app:layout_constraintStart_toStartOf="@+id/title_general_actions"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/spinner_vertical_margin" app:layout_constraintTop_toBottomOf="@+id/title_general_actions"
+            app:layout_constraintHorizontal_bias="0.0"/>
+</android.support.constraint.ConstraintLayout>

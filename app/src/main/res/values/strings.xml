@@ -1,61 +1,6 @@
 <resources>
     <string name="app_name">Fingerprint Controls</string>
-    <string name="enable_fingerprint_controls">Enable Fingerprint Controls</string>
-    <string name="controls_enabled">Fingerprint controls are now enabled</string>
-    <string name="controls_disabled">Fingerprint controls are disabled</string>
-    <string name="fingerprint_service">Fingerprint Controls</string>
-    <string name="err_perm_denied">Please allow permissions before using this app</string>
-    <string name="err_no_fp_sensor">No fingerprint sensor was detected on this device</string>
-    <string name="accessibility_service_description">This service allows for gesture navigation using the fingerprint sensor.</string>
-    <string name="send_feedback">Send Feedback</string>
-    <string name="gestures">Enables navigation controls using swipe gestures on the fingerprint sensor</string>
-    <string name="swipe_up_recent_apps_overview_nswipe_down_home_nswipe_left_back">Swipe Up - Recent Apps Overview\nSwipe Down - Home\nSwipe Left - Back</string>
-    <string name="enable_advanced_controls">Enable Advanced Controls</string>
-    <string name="changes_the_function_of_swipe_gestures_when_the_recent_apps_overview_is_being_shown">Changes the function of swipe gestures when \"Recent Apps\" are being shown</string>
-    <string name="swipe_down_select_app_nswipe_left_scroll_to_the_left_nswipe_right_scroll_to_the_right">Swipe Down - Select app\nSwipe Left - scroll to the left\nSwipe Right - scroll to the right</string>
-    <string name="report_bug">REPORT BUG</string>
-    <string name="suggest_feature">Suggest Feature</string>
-    <string name="send">Send</string>
-    <string name="suggestion_hint">Write your suggestion here</string>
-    <string name="report_bug_hint">Report the bug you observed here. Please be as descriptive as possible, including your phone model and android version.</string>
-    <string name="send_feedback_chooser">Send Feedback...</string>
-    <string name="feedback_sent">Thanks for your feedback!</string>
-    <string name="err_feedback">There was an issue sending your feedback. Please try again</string>
-    <string name="feedback_type_question">What type of feedback would you like to give?</string>
-    <string name="err_enabling">Couldn\'t enable fingerprint gesture controls</string>
-    <string name="advanced_controls">Advanced Controls</string>
-    <string name="advNavDesc">While in the recent tasks view, swiping up and down on the fingerprint censor will cycle through the recent tasks. Swiping left will select the highlighted task.</string>
-    <string name="enableAdvNav">Enable Advanced Navigation Controls</string>
-    <string name="gesturesTitle">Gesture Actions</string>
-    <string name="swipe_left">Swipe Left</string>
-    <string name="swipe_right">Swipe Right</string>
-    <string name="swipe_up">Swipe Up</string>
-    <string name="swipe_down">Swipe Down</string>
-    <string name="feedback_suggestion">[Fingerprint Controls] - Suggestion</string>
-    <string name="feedback_bug_report">[Fingerprint Controls] - Bug Report</string>
-    <string name="alert_title">Enable Accessibility Settings</string>
-    <string name="about_accessibility_title">About Accessibility Privileges</string>
-    <string name="accessibility_explination">Accessibility services need access to potentially sensitive system features. For example, this app must monitor gesture input from the fingerprint sensor and determine which app is in the foreground. This allows fingerprint gesture commands and navigation to work properly. This does not allow the application to record any personal information (nor does this app do that for any reason).</string>
-    <string name="enable_service">Enable Accessibility Service</string>
-    <string name="enable">Enable</string>
-    <string name="what_this">What\'s this?</string>
-    <string name="access_desc_short">This service must be enabled in Accessibility Settings before you can use it.</string>
-    <string name="no_thanks">No Thanks</string>
-    <string name="err_accessibility_service_disabled">Accessibility service has not been activated.</string>
-    <string name="close_app_on_up">Enable Close App on Swipe Up</string>
-    <string name="close_app_desc">Swiping up while in the recent tasks view will now remove the selected app instead of performing the specified action.</string>
-
-    <string-array name="gesture_actions">
-        <item>None</item>
-        <item>Back Action</item>
-        <item>Home Action</item>
-        <item>Recent Apps</item>
-        <item>Notifications Action</item>
-        <item>Power Menu</item>
-        <item>Quick Settings</item>
-        <item>Scroll Left</item>
-        <item>Scroll Right</item>
-        <item>Scroll Up</item>
-        <item>Scroll Down</item>
-    </string-array>
+    <string name="title_general_actions">General Actions</string>
+    <string name="title_app_actions">App Actions</string>
+    <string name="title_about">About</string>
 </resources>

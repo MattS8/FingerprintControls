@@ -64,7 +64,7 @@ class FingerprintService : AccessibilityService() {
                 || className == "com.android.systemui.recent.RecentsActivity"
                 || className == "com.android.systemui.recents.RecentsActivity"
                 || className == "com.android.quickstep.RecentsActivity"
-                || className == "com.google.android.apps.nexuslauncher.NexusLauncherActivity")
+                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P  && className == "com.google.android.apps.nexuslauncher.NexusLauncherActivity"))
     }
 
     override fun onDestroy() {

@@ -1,18 +1,21 @@
 package com.android.ms8.fingerprintcontrols.data
 
-import android.arch.lifecycle.ViewModel
-import android.databinding.ObservableField
-import android.databinding.ObservableInt
+class AppInfo {
+    var appName = ""
+    var packageName = ""
+    var versionName = ""
 
-class AppInfoObservable : ViewModel() {
-    var appName = ObservableField<String>().apply { this.set("") }
-    var packageName = ObservableField<String>().apply { this.set("") }
-    var versionName = ObservableField<String>().apply { this.set("") }
+    var swipeUpAction = ACTION_SAME_AS_DEFAULT
+    var swipeDownAction = ACTION_SAME_AS_DEFAULT
+    var swipeLeftAction = ACTION_SAME_AS_DEFAULT
+    var swipeRightAction = ACTION_SAME_AS_DEFAULT
 
-    var swipeUpAction = ObservableInt().apply { this.set(ACTION_SAME_AS_DEFAULT) }
-    var swipeDownAction = ObservableInt().apply { this.set(ACTION_SAME_AS_DEFAULT) }
-    var swipeLeftAction = ObservableInt().apply { this.set(ACTION_SAME_AS_DEFAULT) }
-    var swipeRightAction = ObservableInt().apply { this.set(ACTION_SAME_AS_DEFAULT)}
+    constructor()
+
+    constructor(name: String, pName: String) {
+        appName = name
+        packageName = pName
+    }
 
     companion object {
         const val ACTION_NONE = 0

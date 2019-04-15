@@ -1,16 +1,10 @@
 package com.android.ms8.fingerprintcontrols
 
-import android.Manifest
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.databinding.Observable
-import android.databinding.ObservableInt
-import android.os.Build
+import android.databinding.ObservableField
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.Settings
@@ -20,12 +14,12 @@ import android.support.v4.app.Fragment
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
-import android.widget.Switch
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
 import com.android.ms8.fingerprintcontrols.data.ConfigurationObservable
 import com.android.ms8.fingerprintcontrols.databinding.MainActivityBinding
+import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
+import com.android.ms8.fingerprintcontrols.listeners.ObservableListener
 import com.android.ms8.fingerprintcontrols.pages.AppActionsFragment
 import com.android.ms8.fingerprintcontrols.pages.HelpFragment
 import com.android.ms8.fingerprintcontrols.pages.MainOptionsFragment
@@ -33,31 +27,20 @@ import com.android.ms8.fingerprintcontrols.service.FingerprintService
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.main_activity.*
 
-class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
+class MainActivity : AppCompatActivity(), FragmentListener,
+    ObservableListener {
     lateinit var binding : MainActivityBinding
     lateinit var config: ConfigurationObservable
     /**
      * Listener for bottom nav bar that loads the proper fragment.
      */
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        var fragment : Fragment? = null
-
-        // Get fragment based on item selected
-        when (item.itemId) {
-            R.id.navigation_main_options -> { fragment = MainOptionsFragment.newInstance() }
-            R.id.navigation_app_actions -> { fragment = AppActionsFragment.newInstance() }
-            R.id.navigation_about -> { fragment = HelpFragment.newInstance() }
-        }
-
-        // Update config file with current page selection
-        binding.configuration?.currentPage?.set(item.itemId)
-        updateConfig()
-
         // Set title based on selected page
         titlePage.text = getPageTitle(binding.configuration?.currentPage?.get())
-
         // Load fragment and return success/failure
-        loadFragment(fragment)
+        loadFragment(item.itemId)
+
+        return@OnNavigationItemSelectedListener true
     }
 
     /**
@@ -65,7 +48,7 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
      * explaining that the app will not work without the permission. If the permission is accepted, check whether
      * fingerprint hardware is found and report results accordingly.
      */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) =
         when (requestCode) {
             REQ_FINGERPRINT -> {
                     when {
@@ -79,7 +62,6 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                     }
 
                     // Permission was accepted and fingerprint hardware was found
-
                        FingerprintManagerCompat.from(this).isHardwareDetected -> {
                         // Update configuration file
                         binding.configuration?.bServiceEnabled?.set(true)
@@ -104,21 +86,14 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                     }
                 }
             }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
 
-    override fun onResume() {
-        super.onResume()
-        config.bServiceEnabled.set(FingerprintService.getServiceObject() != null)
-        Log.d("test###", "OnResume called! (bServiceEnabled = ${config.bServiceEnabled.get()})")
-    }
+    override fun onResume() = super.onResume()
+        .also { config.bServiceEnabled.set(FingerprintService.getServiceObject() != null) }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d("test###", "OnPause called!")
-        updateConfig()
-    }
+    override fun onPause() = super.onPause()
+        .also { updateConfig() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,14 +118,7 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         // Load last viewed page
-        when (config?.currentPage?.get()) {
-            // General Actions Page
-            R.id.navigation_main_options -> loadFragment(MainOptionsFragment.newInstance())
-            // App Actions Page
-            R.id.navigation_app_actions -> loadFragment(AppActionsFragment.newInstance())
-            // About Page
-            R.id.navigation_about -> loadFragment(HelpFragment.newInstance())
-        }
+        config?.currentPage?.get()?.let { loadFragment(it) }
 
         // Set bottom nav bar to last viewed page
         navigation.selectedItemId = config?.currentPage?.get() ?: R.id.navigation_main_options
@@ -167,59 +135,61 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     /** Adds callback to all spinners that updates config immediately after change **/
     private fun addSpinnerCallbacks() {
         config.swipeDownAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
         config.swipeUpAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
         config.swipeLeftAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
+
         })
         config.swipeRightAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
 
         config.recentSwipeUpAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
         config.recentSwipeDownAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
         config.recentSwipeLeftAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
         config.recentSwipeRightAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                updateConfig()
-            }
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
     }
 
-    /** Loads a fragment into the frag_container when the fragment parameter is not null. **/
-    private fun loadFragment(fragment: Fragment?) : Boolean {
-        if (fragment != null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.frag_container, fragment)
-                .commit()
-            return true
-        }
+    /** Takes care of all logic concerning switching the shown page in the container**/
+    private fun loadFragment(itemId: Int) {
+        // Find fragment for intended page
+        var fragment : Fragment? = supportFragmentManager.findFragmentByTag(getPageTitle(itemId) as String)
 
-        return false
+        // Start page swap transaction
+        val fragTransaction = supportFragmentManager.beginTransaction()
+
+        // Detach current page if there is one
+        if (supportFragmentManager.primaryNavigationFragment != null)
+            fragTransaction.detach(supportFragmentManager.primaryNavigationFragment!!)
+
+        // Get a new fragment (based on item selected) if frag manager doesn't have one
+        if (fragment == null) {
+            when (itemId) {
+                R.id.navigation_main_options -> { fragment = MainOptionsFragment.newInstance() }
+                R.id.navigation_app_actions -> { fragment = AppActionsFragment.newInstance() }
+                R.id.navigation_about -> { fragment = HelpFragment.newInstance() }
+                else -> fragment = MainOptionsFragment.newInstance()
+            }
+            fragTransaction.add(R.id.frag_container, fragment, getPageTitle(itemId) as String)
+        }
+        else
+            fragTransaction.attach(fragment)
+
+        fragTransaction.setPrimaryNavigationFragment(fragment)
+        fragTransaction.setReorderingAllowed(true)
+        fragTransaction.commitNowAllowingStateLoss()
     }
 
     /** Returns the title of the page corresponding to the page int resource **/

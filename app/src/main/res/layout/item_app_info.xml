@@ -1,6 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="viewModel" type="com.android.ms8.fingerprintcontrols.data.AppInfo"/>
+    </data>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:clickable="true">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" tools:srcCompat="@mipmap/ic_launcher"
+                android:id="@+id/imgAppIcon" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="0.0"
+                android:layout_marginTop="8dp" android:layout_marginStart="32dp"
+                android:contentDescription="@string/application_icon"
+                app:layout_constraintEnd_toStartOf="@+id/packageName"/>
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/appTitle" app:layout_constraintStart_toEndOf="@+id/imgAppIcon"
+                android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="32dp" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:text="@{viewModel.appName}"
+                tools:text="Fingerprint Controls" android:textSize="18sp"/>
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/packageName" app:layout_constraintStart_toEndOf="@+id/imgAppIcon"
+                android:layout_marginStart="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/appTitle"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                android:ellipsize="marquee"
+                android:text="@{viewModel.packageName}"
+                tools:text="com.android.matts.example.reallylong.example.likeomg"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp" android:singleLine="true"
+                android:layout_marginTop="0dp"/>
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/customActionsCount"
+                app:layout_constraintTop_toBottomOf="@+id/packageName"
+                app:layout_constraintBottom_toBottomOf="@+id/imgAppIcon" app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/imgAppIcon" android:layout_marginStart="16dp"
+                android:layout_marginEnd="32dp" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                tools:text="2 custom actions"
+                android:textStyle="bold|italic"
+                android:text="Hi"
+                android:textColor="@color/colorAccent" android:textSize="14sp"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

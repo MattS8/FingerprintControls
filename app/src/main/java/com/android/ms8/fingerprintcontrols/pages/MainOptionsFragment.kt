@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
-import com.android.ms8.fingerprintcontrols.FragmentListener
+import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
 import com.android.ms8.fingerprintcontrols.MainActivity
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.databinding.FragmentMainOptionsBinding
@@ -21,14 +21,12 @@ class MainOptionsFragment : Fragment() {
     lateinit var binding: FragmentMainOptionsBinding
     private var listener: FragmentListener? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMainOptionsBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
+            = FragmentMainOptionsBinding.inflate(inflater, container, false)
             .apply { this.config = listener?.getConfiguration() }
             .apply { this.serviceEnabled.setOnClickListener { v -> toggleService((v as Switch).isChecked) } }
+            .apply { binding = this }.root
 
-        return binding.root
-    }
 
     /**
      * Starts the service-enabling process when bIsChecked is true and attempts to stop the service

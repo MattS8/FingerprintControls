@@ -1,9 +1,7 @@
 package com.android.ms8.fingerprintcontrols.data
 
 import android.arch.lifecycle.ViewModel
-import android.content.Context
 import android.databinding.*
-import com.android.ms8.fingerprintcontrols.ObservableListener
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_BACK
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_HOME

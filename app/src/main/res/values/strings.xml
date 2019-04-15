@@ -25,7 +25,8 @@
     <string name="accessibility_service_description">This service allows for gesture navigation using the fingerprint
         sensor.
     </string>
-    <string name="reset_main_options">Reset Main Options</string>
+    <string name="reset_main_options">Reset Options</string>
+    <string name="application_icon">Application Icon</string>
 
     <string-array name="gesture_actions">
         <item>None</item>
@@ -54,6 +55,21 @@
         <item>Notifications Action</item>
         <item>Power Menu</item>
         <item>Quick Settings</item>
+        <item>Same as Default Action</item>
+    </string-array>
+
+    <string-array name="gesture_actions_app">
+        <item>None</item>
+        <item>Back Action</item>
+        <item>Home Action</item>
+        <item>Recent Apps</item>
+        <item>Notifications Action</item>
+        <item>Power Menu</item>
+        <item>Quick Settings</item>
+        <item>Scroll Left</item>
+        <item>Scroll Right</item>
+        <item>Scroll Up</item>
+        <item>Scroll Down</item>
         <item>Same as Default Action</item>
     </string-array>
 </resources>

@@ -1,4 +1,4 @@
-package com.android.ms8.fingerprintcontrols
+package com.android.ms8.fingerprintcontrols.listeners
 
 import com.android.ms8.fingerprintcontrols.data.ConfigurationObservable
 

@@ -1,9 +1,12 @@
 package com.android.ms8.fingerprintcontrols.data
 
+import android.net.Uri
+
 class AppInfo {
     var appName = ""
     var packageName = ""
     var versionName = ""
+    var iconUri : Uri? = null
 
     var swipeUpAction = ACTION_SAME_AS_DEFAULT
     var swipeDownAction = ACTION_SAME_AS_DEFAULT
@@ -12,9 +15,10 @@ class AppInfo {
 
     constructor()
 
-    constructor(name: String, pName: String) {
+    constructor(name: String, pName: String, pIconUri: Uri) {
         appName = name
         packageName = pName
+        iconUri = pIconUri
     }
 
     companion object {

@@ -1,6 +1,9 @@
 package com.android.ms8.fingerprintcontrols.adapters
 
+import android.content.ContentResolver
 import android.databinding.DataBindingUtil
+import android.net.Uri
+import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,12 +13,8 @@ import com.android.ms8.fingerprintcontrols.databinding.ItemAppInfoBinding
 
 //todo Add swipe-to-delete functionality
 //todo Add multi-select functionality
-class AppInfoAdapter(apps: List<AppInfo>?) : RecyclerView.Adapter<AppInfoAdapter.AppInfoHolder>() {
-    var apps = apps ?: emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+class AppInfoAdapter : RecyclerView.Adapter<AppInfoAdapter.AppInfoHolder>() {
+    private val apps : ArrayList<AppInfo> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppInfoHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -29,8 +28,11 @@ class AppInfoAdapter(apps: List<AppInfo>?) : RecyclerView.Adapter<AppInfoAdapter
         .also { holder.binding.root.setOnClickListener { onAppClicked(apps[holder.adapterPosition]) } }
 
     private fun onAppClicked(appInfo: AppInfo) {
+
         //todo start activity showing action options for selected application
     }
+
+    fun add(app : AppInfo) = apps.add(app).also { notifyItemInserted(apps.size-1) }
 
     class AppInfoHolder(dataBinding : ItemAppInfoBinding) : RecyclerView.ViewHolder(dataBinding.root) {
         var binding = dataBinding
@@ -39,8 +41,6 @@ class AppInfoAdapter(apps: List<AppInfo>?) : RecyclerView.Adapter<AppInfoAdapter
             this.binding.viewModel = appInfo
             this.binding.executePendingBindings()
         }
-
-
     }
 
 }

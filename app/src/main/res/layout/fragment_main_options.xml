@@ -256,7 +256,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_recent_swipe_right"
                     android:layout_marginTop="16dp" style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_marginBottom="32dp" android:onClick="ResetMainOptions"/>
+                    android:layout_marginBottom="16dp"/>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </layout>

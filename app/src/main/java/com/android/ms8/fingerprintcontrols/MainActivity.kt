@@ -35,8 +35,11 @@ class MainActivity : AppCompatActivity(), FragmentListener,
      * Listener for bottom nav bar that loads the proper fragment.
      */
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        // Set current selected page
+        binding.configuration?.currentPage?.set(item.itemId)
+
         // Set title based on selected page
-        titlePage.text = getPageTitle(binding.configuration?.currentPage?.get())
+        titlePage.text = getPageTitle(item.itemId)
         // Load fragment and return success/failure
         loadFragment(item.itemId)
 
@@ -62,14 +65,17 @@ class MainActivity : AppCompatActivity(), FragmentListener,
                     }
 
                     // Permission was accepted and fingerprint hardware was found
-                       FingerprintManagerCompat.from(this).isHardwareDetected -> {
+                    FingerprintManagerCompat.from(this).isHardwareDetected -> {
                         // Update configuration file
                         binding.configuration?.bServiceEnabled?.set(true)
                         updateConfig()
 
-                        // Start service
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                        startActivityForResult(intent, RES_ACCESSIBILITY)
+                        // Start service if no service is running
+                        when {
+                            FingerprintService.getServiceObject() == null ->
+                                startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), RES_ACCESSIBILITY)
+                            else -> {}
+                        }
                     }
 
                     // Permission was accepted but no fingerprint hardware was found
@@ -142,7 +148,6 @@ class MainActivity : AppCompatActivity(), FragmentListener,
         })
         config.swipeLeftAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
-
         })
         config.swipeRightAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
@@ -199,7 +204,7 @@ class MainActivity : AppCompatActivity(), FragmentListener,
             R.id.navigation_main_options -> getString(R.string.title_main_options)
             R.id.navigation_app_actions -> getString(R.string.title_app_actions)
             R.id.navigation_about -> getString(R.string.title_help)
-            else -> ""
+            else -> "ERROR"
         }
     }
 

@@ -6,4 +6,5 @@
     <dimen name="options_horizontal_margin">32dp</dimen>
     <dimen name="header_vertical_margin">32dp</dimen>
     <dimen name="spinner_margin_end">32dp</dimen>
+    <dimen name="app_icon_size">48dp</dimen>
 </resources>

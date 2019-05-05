@@ -1,11 +1,13 @@
 package com.android.ms8.fingerprintcontrols.util
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.android.ms8.fingerprintcontrols.data.AppInfo
@@ -15,16 +17,23 @@ object ApkInfoFactory {
     /**
      * Returns a list of package names of all installed apps (excluding system apps).
      */
-    fun GetAllInstalledApkInfo(context : Context) : HashMap<String, AppInfo> {
+    fun GetAllInstalledApkInfo(context : Context?) : HashMap<String, AppInfo> {
         val apkInfo = HashMap<String, AppInfo>()
         val intent = Intent(Intent.ACTION_MAIN, null)
             .apply {  addCategory(Intent.CATEGORY_LAUNCHER)}
             .apply { flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED) }
-        val resolveInfoList = context.packageManager.queryIntentActivities(intent, 0)
+        val resolveInfoList = context?.packageManager?.queryIntentActivities(intent, 0)
 
-        resolveInfoList.forEach{
+        resolveInfoList?.forEach{
             if (!isSystemPackage(it))
-                apkInfo[it.activityInfo.packageName] = AppInfo(it.activityInfo.name, it.activityInfo.packageName)
+                apkInfo[it.activityInfo.packageName] = AppInfo(
+                    it.activityInfo.loadLabel(context.packageManager).toString(),
+                    it.activityInfo.packageName,
+                    Uri.Builder()
+                        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                        .authority(it.activityInfo.packageName)
+                        .path(it.activityInfo.iconResource.toString())
+                        .build())
         }
 
         return apkInfo
@@ -58,9 +67,14 @@ object ApkInfoFactory {
         }
     }
 
-    /* ------------------------------------------ Simple helper functions ------------------------------------------ */
+    /* ---------------- Simple helper functions ---------------- */
 
     private fun isSystemPackage(resolveInfo : ResolveInfo) : Boolean
             = (resolveInfo.activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
 
+
+    /* Simple interface to get list from background task */
+    interface AsyncResponse {
+        fun appListReceived(applist: HashMap<String, AppInfo>?)
+    }
 }

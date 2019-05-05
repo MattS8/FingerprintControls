@@ -5,29 +5,17 @@
         <variable name="appAdapter" type="com.android.ms8.fingerprintcontrols.adapters.AppInfoAdapter"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 tools:context=".pages.AppActionsFragment">
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical"
+                  tools:context=".pages.AppActionsFragment">
 
-        <!-- TODO: Update blank fragment layout -->
         <android.support.v7.widget.RecyclerView
+                android:id="@+id/applist"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="match_parent"
                 android:adapter="@{appAdapter}"
-                android:fadingEdgeLength="50dp"
-                android:paddingBottom="100dp"
                 android:clipToPadding="false"/>
 
-        <TextView
-                android:text="App Actions Page"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/temp" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
-                app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.3"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"/>
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 </layout>

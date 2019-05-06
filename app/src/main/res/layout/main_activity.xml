@@ -17,11 +17,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/titlePage"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="16dp" android:layout_marginEnd="8dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" tools:text="App Actions"/>
+                android:layout_marginBottom="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+                tools:text="App Actions" app:layout_constraintBottom_toTopOf="@+id/frag_container"/>
         <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"
                 android:layout_width="0dp"

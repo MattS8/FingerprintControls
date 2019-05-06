@@ -17,7 +17,7 @@ object ApkInfoFactory {
     /**
      * Returns a list of package names of all installed apps (excluding system apps).
      */
-    fun GetAllInstalledApkInfo(context : Context?) : HashMap<String, AppInfo> {
+    fun getAllInstalledApkInfo(context : Context?) : HashMap<String, AppInfo> {
         val apkInfo = HashMap<String, AppInfo>()
         val intent = Intent(Intent.ACTION_MAIN, null)
             .apply {  addCategory(Intent.CATEGORY_LAUNCHER)}
@@ -75,6 +75,6 @@ object ApkInfoFactory {
 
     /* Simple interface to get list from background task */
     interface AsyncResponse {
-        fun appListReceived(applist: HashMap<String, AppInfo>?)
+        fun appListReceived(appList: ArrayList<AppInfo>)
     }
 }

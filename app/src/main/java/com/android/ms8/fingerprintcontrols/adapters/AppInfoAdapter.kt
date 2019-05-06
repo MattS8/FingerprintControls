@@ -14,7 +14,7 @@ import com.android.ms8.fingerprintcontrols.databinding.ItemAppInfoBinding
 //todo Add swipe-to-delete functionality
 //todo Add multi-select functionality
 class AppInfoAdapter : RecyclerView.Adapter<AppInfoAdapter.AppInfoHolder>() {
-    private val apps : ArrayList<AppInfo> = ArrayList()
+    private var apps : ArrayList<AppInfo> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppInfoHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -33,6 +33,8 @@ class AppInfoAdapter : RecyclerView.Adapter<AppInfoAdapter.AppInfoHolder>() {
     }
 
     fun add(app : AppInfo) = apps.add(app).also { notifyItemInserted(apps.size-1) }
+
+    fun setApps(newAppList : ArrayList<AppInfo>) {apps = newAppList.also { notifyDataSetChanged() }}
 
     class AppInfoHolder(dataBinding : ItemAppInfoBinding) : RecyclerView.ViewHolder(dataBinding.root) {
         var binding = dataBinding

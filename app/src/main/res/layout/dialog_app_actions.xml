@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="viewModel" type="com.android.ms8.fingerprintcontrols.data.AppInfo"/>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
+                android:text="@string/save_changes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/btnSaveChanges"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_right"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.0" android:layout_marginTop="16dp"
+                app:layout_constraintStart_toEndOf="@+id/btnCancel" android:layout_marginStart="8dp"
+                app:layout_constraintHorizontal_bias="0.5" style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_marginEnd="32dp"/>
+        <Button
+                android:text="@android:string/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/btnCancel"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_right"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.0" android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toStartOf="@+id/btnSaveChanges" app:layout_constraintHorizontal_bias="0.0"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored" android:layout_marginStart="32dp"/>
+        <TextView
+                android:text="@string/default_swipe_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_app_actions"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/options_horizontal_margin"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_goneMarginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_marginTop="@dimen/header_vertical_margin"
+                app:layout_constraintBottom_toTopOf="@+id/title_default_swipe_up" android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="16dp"/>
+
+        <TextView
+                android:text="@string/swipe_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_default_swipe_right"
+                app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/spinner_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_left"
+                app:layout_constraintHorizontal_bias="0.0"/>
+        <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
+                 app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                 app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_right"
+                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
+                 app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
+                 android:id="@+id/spinner_default_swipe_right" android:entries="@array/gesture_actions_app"
+                 android:selectedItemPosition="@={viewModel.swipeRightAction}"
+                 android:layout_marginBottom="16dp" app:layout_constraintBottom_toBottomOf="parent"
+                 app:layout_constraintVertical_bias="0.0">
+
+        </Spinner>
+        <TextView
+                android:text="@string/swipe_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_default_swipe_left"
+                app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/spinner_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_down"
+                app:layout_constraintHorizontal_bias="0.0"/>
+        <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
+                 app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                 app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_left"
+                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
+                 app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
+                 android:id="@+id/spinner_default_swipe_left" android:entries="@array/gesture_actions_app"
+                 android:selectedItemPosition="@={viewModel.swipeLeftAction}"
+                 android:layout_marginBottom="8dp"
+                 app:layout_constraintBottom_toTopOf="@+id/title_default_swipe_right">
+
+        </Spinner>
+
+
+        <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
+                 app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                 app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_up"
+                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
+                 app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
+                 android:id="@+id/spinner_default_swipe_up" android:entries="@array/gesture_actions_app"
+                 android:selectedItemPosition="@={viewModel.swipeUpAction}"
+                 app:layout_constraintBottom_toTopOf="@+id/title_default_swipe_down">
+
+        </Spinner>
+        <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
+                 app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                 app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_down"
+                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
+                 app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
+                 android:id="@+id/spinner_default_swipe_down" android:entries="@array/gesture_actions_app"
+                 android:selectedItemPosition="@={viewModel.swipeDownAction}"
+                 android:layout_marginBottom="8dp"
+                 app:layout_constraintBottom_toTopOf="@+id/title_default_swipe_left">
+        </Spinner>
+        <TextView
+                android:text="@string/swipe_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_default_swipe_down"
+                app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/spinner_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_up"
+                app:layout_constraintHorizontal_bias="0.0"/>
+        <TextView
+                android:text="@string/swipe_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_default_swipe_up"
+                app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/spinner_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@+id/title_app_actions"
+                app:layout_constraintHorizontal_bias="0.0"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

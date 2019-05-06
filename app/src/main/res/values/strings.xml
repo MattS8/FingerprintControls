@@ -27,6 +27,9 @@
     </string>
     <string name="reset_main_options">Reset Options</string>
     <string name="application_icon">Application Icon</string>
+    <string name="delete_custom_actions">Delete custom actions</string>
+    <string name="custom_actions">custom actions</string>
+    <string name="custom_action">custom action</string>
 
     <string-array name="gesture_actions">
         <item>None</item>

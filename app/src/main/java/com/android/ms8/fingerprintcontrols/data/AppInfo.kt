@@ -5,13 +5,38 @@ import android.net.Uri
 class AppInfo {
     var appName = ""
     var packageName = ""
-    var versionName = ""
     var iconUri : Uri? = null
+    var numberOfCustomActions = 0
 
     var swipeUpAction = ACTION_SAME_AS_DEFAULT
+        set(value) {
+            field = value
+            numberOfCustomActions = getNumOfCustomActions()
+        }
     var swipeDownAction = ACTION_SAME_AS_DEFAULT
+        set(value) {
+            field = value
+            numberOfCustomActions = getNumOfCustomActions()
+        }
     var swipeLeftAction = ACTION_SAME_AS_DEFAULT
+        set(value) {
+            field = value
+            numberOfCustomActions = getNumOfCustomActions()
+        }
     var swipeRightAction = ACTION_SAME_AS_DEFAULT
+        set(value) {
+        field = value
+        numberOfCustomActions = getNumOfCustomActions()
+    }
+
+    private fun getNumOfCustomActions() : Int {
+        var numActions = if (swipeUpAction == ACTION_SAME_AS_DEFAULT) 1 else 0
+        numActions += if (swipeDownAction == ACTION_SAME_AS_DEFAULT) 1 else 0
+        numActions += if (swipeLeftAction == ACTION_SAME_AS_DEFAULT) 1 else 0
+        numActions += if (swipeRightAction == ACTION_SAME_AS_DEFAULT) 1 else 0
+
+        return numActions
+    }
 
     constructor()
 

@@ -1,6 +1,11 @@
 package com.android.ms8.fingerprintcontrols.data
 
+import android.app.Dialog
+import android.databinding.DataBindingUtil
 import android.net.Uri
+import android.util.Log
+import android.view.View
+import com.android.ms8.fingerprintcontrols.AppActionsDialog
 
 class AppInfo {
     var appName = ""
@@ -29,6 +34,13 @@ class AppInfo {
         numberOfCustomActions = getNumOfCustomActions()
     }
 
+    /** Shows a dialog allowing the user to change gesture actions for application **/
+    fun onAppClicked(view: View) {
+        Log.d("test####", "onAppClicked: $appName")
+        AppActionsDialog(view.context, this).show()
+    }
+
+    /** Returns the number of custom actions bound to this application **/
     private fun getNumOfCustomActions() : Int {
         var numActions = if (swipeUpAction == ACTION_SAME_AS_DEFAULT) 1 else 0
         numActions += if (swipeDownAction == ACTION_SAME_AS_DEFAULT) 1 else 0

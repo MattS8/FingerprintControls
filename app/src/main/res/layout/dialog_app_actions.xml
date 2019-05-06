@@ -17,6 +17,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_right"
                 app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintVertical_bias="0.0" android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintStart_toEndOf="@+id/btnCancel" android:layout_marginStart="8dp"
                 app:layout_constraintHorizontal_bias="0.5" style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_marginEnd="32dp"/>
@@ -31,7 +32,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/btnSaveChanges" app:layout_constraintHorizontal_bias="0.0"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored" android:layout_marginStart="32dp"/>
         <TextView
-                android:text="@string/default_swipe_actions"
+                tools:text="Snapchat Custom Actions"
+                android:text="@{viewModel.appName + @string/title_custom_actions}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/title_app_actions"

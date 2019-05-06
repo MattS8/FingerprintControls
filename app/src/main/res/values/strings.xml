@@ -28,6 +28,7 @@
     <string name="application_icon">Application Icon</string>
     <string name="delete_custom_actions">Delete custom actions</string>
     <string name="custom_actions">custom actions</string>
+    <string name="title_custom_actions">&#160;Custom Actions</string>
     <string name="custom_action">custom action</string>
     <string name="save_changes">Save Changes</string>
 
@@ -73,6 +74,6 @@
         <item>Scroll Right</item>
         <item>Scroll Up</item>
         <item>Scroll Down</item>
-        <item>Same as Default Action</item>
+        <item>Default Action</item>
     </string-array>
 </resources>

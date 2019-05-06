@@ -29,6 +29,7 @@ class AppActionsFragment : Fragment(), ApkInfoFactory.AsyncResponse {
             .apply { binding = this }
             .apply { binding.applist.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) }
             .apply { binding.appAdapter = AppInfoAdapter() }
+            .apply { listener?.bindToolbar(this.applist) }
             .apply { GetAppsTask(this@AppActionsFragment, context).execute() }
             .root
 
@@ -44,6 +45,7 @@ class AppActionsFragment : Fragment(), ApkInfoFactory.AsyncResponse {
     override fun onDetach() = super.onDetach()
         .also {
             listener?.updateConfig()
+            listener?.unbindToolbar()
             listener = null
         }
 

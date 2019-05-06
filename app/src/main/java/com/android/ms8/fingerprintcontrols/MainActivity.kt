@@ -13,7 +13,9 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.widget.ScrollView
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
 import com.android.ms8.fingerprintcontrols.data.ConfigurationObservable
@@ -27,8 +29,7 @@ import com.android.ms8.fingerprintcontrols.service.FingerprintService
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.main_activity.*
 
-class MainActivity : AppCompatActivity(), FragmentListener,
-    ObservableListener {
+class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     lateinit var binding : MainActivityBinding
     lateinit var config: ConfigurationObservable
     /**
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity(), FragmentListener,
         binding.configuration?.currentPage?.set(item.itemId)
 
         // Set title based on selected page
-        titlePage.text = getPageTitle(item.itemId)
+        toolbar.title = getPageTitle(item.itemId)
         // Load fragment and return success/failure
         loadFragment(item.itemId)
 
@@ -129,8 +130,10 @@ class MainActivity : AppCompatActivity(), FragmentListener,
         // Set bottom nav bar to last viewed page
         navigation.selectedItemId = config?.currentPage?.get() ?: R.id.navigation_main_options
 
+        // todo Link toolbar with scroll view
+
         // Set title based on selected page
-        titlePage.text = getPageTitle(config?.currentPage?.get())
+        toolbar.title = getPageTitle(config?.currentPage?.get())
 
         // Add callbacks for spinners to detect changes instantly
         addSpinnerCallbacks()
@@ -208,6 +211,8 @@ class MainActivity : AppCompatActivity(), FragmentListener,
         }
     }
 
+    /* ------------------------------------------ Listener Functions ------------------------------------------ */
+
     /** Updates preferences with latest config **/
     override fun updateConfig() {
         PreferenceManager.getDefaultSharedPreferences(this).edit()
@@ -219,6 +224,22 @@ class MainActivity : AppCompatActivity(), FragmentListener,
     /** A simple getter for the current copy of the configuration file **/
     override fun getConfiguration(): ConfigurationObservable? {
         return config
+    }
+
+    //TODO fix WaterfallToolbar so that it doesn't crash when rebinding scrolling component
+    override fun bindToolbar(recyclerView: RecyclerView) {
+        unbindToolbar()
+        waterfall_toolbar.recyclerView = recyclerView
+    }
+
+    override fun bindToolbar(scrollView: ScrollView) {
+        unbindToolbar()
+        waterfall_toolbar.scrollView = scrollView
+    }
+
+    override fun unbindToolbar() {
+        waterfall_toolbar.recyclerView = null
+        waterfall_toolbar.scrollView = null
     }
 
     companion object {

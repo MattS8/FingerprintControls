@@ -44,4 +44,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    implementation 'com.github.hugocastelani:waterfall-toolbar:0.4.0'
 }

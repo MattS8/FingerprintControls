@@ -25,6 +25,7 @@ class MainOptionsFragment : Fragment() {
             = FragmentMainOptionsBinding.inflate(inflater, container, false)
             .apply { this.config = listener?.getConfiguration() }
             .apply { this.serviceEnabled.setOnClickListener { v -> toggleService((v as Switch).isChecked) } }
+            .apply { listener?.bindToolbar(this.scrollviewMainOptions) }
             .apply { binding = this }.root
 
 
@@ -55,6 +56,7 @@ class MainOptionsFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener?.updateConfig()
+        listener?.unbindToolbar()
         listener = null
     }
 

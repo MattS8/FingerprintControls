@@ -13,16 +13,26 @@
             android:layout_height="match_parent"
             tools:context=".MainActivity">
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/titlePage"
-                app:layout_constraintStart_toStartOf="parent"
+        <com.hugocastelani.waterfalltoolbar.WaterfallToolbar
+
+                android:id="@+id/waterfall_toolbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
-                tools:text="App Actions" app:layout_constraintBottom_toTopOf="@+id/frag_container"/>
+                app:layout_constraintVertical_bias="0">
+
+            <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_gravity="center"
+                    android:background="@color/backgroundLight"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"/>
+
+        </com.hugocastelani.waterfalltoolbar.WaterfallToolbar>
+
         <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"
                 android:layout_width="0dp"
@@ -38,8 +48,9 @@
                 android:layout_height="0dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/waterfall_toolbar"
                 app:layout_constraintBottom_toTopOf="@+id/navigation"
-                android:id="@+id/frag_container" app:layout_constraintTop_toBottomOf="@+id/titlePage">
+                android:id="@+id/frag_container">
         </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>

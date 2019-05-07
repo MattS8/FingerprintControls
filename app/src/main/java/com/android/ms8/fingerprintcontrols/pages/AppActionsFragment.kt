@@ -1,8 +1,9 @@
 package com.android.ms8.fingerprintcontrols.pages
 
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -14,24 +15,29 @@ import com.android.ms8.fingerprintcontrols.data.AppInfo
 import com.android.ms8.fingerprintcontrols.databinding.FragmentAppActionsBinding
 import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
 import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
-import com.google.gson.Gson
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.lang.Exception
-import java.lang.ref.WeakReference
 
-class AppActionsFragment : Fragment(), ApkInfoFactory.AsyncResponse {
+class AppActionsFragment : Fragment() {
     private lateinit var binding: FragmentAppActionsBinding
     private var listener: FragmentListener? = null
+    private lateinit var adapter : AppInfoAdapter
+    private val viewModel = AppInfoViewModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) = super.onCreate(savedInstanceState).apply {
+        adapter = AppInfoAdapter()
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-        FragmentAppActionsBinding.inflate(inflater, container, false)
-            .apply { binding = this }
-            .apply { binding.applist.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) }
-            .apply { binding.appAdapter = AppInfoAdapter() }
-            .apply { listener?.bindToolbar(this.applist) }
-            .apply { GetAppsTask(this@AppActionsFragment, context).execute() }
-            .root
+        FragmentAppActionsBinding.inflate(inflater, container, false).apply {
+            binding = this
+            binding.appAdapter = adapter
+            binding.applist.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            listener?.bindToolbar(this.applist)
+
+            viewModel.appList.observe(activity!!, Observer {
+                adapter.setApps(it as ArrayList<AppInfo>? ?: ArrayList())
+            })
+        }.root
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -42,79 +48,23 @@ class AppActionsFragment : Fragment(), ApkInfoFactory.AsyncResponse {
         }
     }
 
+    override fun onResume() = super.onResume().apply {
+        binding.appAdapter = adapter
+    }
+
+
     override fun onDetach() = super.onDetach()
         .also {
+            Log.d("test%%", "Detatching...")
+            onSaveInstanceState(Bundle())
             listener?.updateConfig()
             listener?.unbindToolbar()
             listener = null
         }
 
-    /**
-     * Listener function that adds AppInfo to adapter list
-     */
-    override fun appListReceived(appList: ArrayList<AppInfo>) {
-        binding.appAdapter?.setApps(appList)
-    }
 
-    /**
-     * Fetches saved list of modified apps and all apps on device
-     */
-    private class GetAppsTask(ref: ApkInfoFactory.AsyncResponse, context: Context?) : AsyncTask<Int, Nothing, ArrayList<AppInfo>>() {
-        var context : WeakReference<Context?> = WeakReference(context)
-        var response : WeakReference<ApkInfoFactory.AsyncResponse> = WeakReference(ref)
-
-        override fun doInBackground(vararg params: Int?): ArrayList<AppInfo>? {
-            var appActionsStr = ""
-
-            // Attempt to open file containing custom application actions
-            try {
-                val bufferedReader = BufferedReader(InputStreamReader(context.get()?.openFileInput("CustomAppActions")))
-
-                // Read in saved list of apps with custom actions from internal storage
-                val stringBuilder = StringBuilder()
-                var line: String? = bufferedReader.readLine()
-                while (line != null)
-                    stringBuilder
-                        .append(line)
-                        .also { line = bufferedReader.readLine() }
-
-                // Save to string variable for future conversion
-                appActionsStr = stringBuilder.toString()
-            } catch (e : Exception) { Log.w("test####", e.message) }
-
-            // Exit early if context reference is gone
-            if (context.get() == null)
-                return ArrayList()
-
-            // Get hash map of all apps by name
-            val allApps = context.get().let { ApkInfoFactory.getAllInstalledApkInfo(it) }
-
-            // Convert JSON string to Hashmap (empty list if no previously modified apps)
-            val modifiedApps = if (appActionsStr != "") Gson().fromJson(appActionsStr, HashMap<String, AppInfo>()::class.java)
-                else HashMap()
-
-            // Initialize list of all apps (return value)
-            val allAppsList = ArrayList<AppInfo>()
-
-            // Remove previously modified apps from all-apps list
-            modifiedApps.forEach{
-                if (allApps.contains(it.key)) {
-                    allApps.remove(it.key)
-                }
-
-                // Add modified app to all-apps list
-                allAppsList.add(it.value)
-            }
-
-            // Add the rest of the apps to all-apps list
-            allApps.forEach {allAppsList.add(it.value)}
-
-            return allAppsList
-        }
-
-        override fun onPostExecute(result: ArrayList<AppInfo>?) {
-            result?.let { response.get()?.appListReceived(it) }
-        }
+    class AppInfoViewModel : ViewModel() {
+        val appList = ApkInfoFactory.AppInfoList
     }
 
     companion object {

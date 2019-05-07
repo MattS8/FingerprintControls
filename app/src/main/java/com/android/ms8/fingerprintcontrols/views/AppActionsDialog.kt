@@ -1,4 +1,4 @@
-package com.android.ms8.fingerprintcontrols
+package com.android.ms8.fingerprintcontrols.views
 
 import android.app.Dialog
 import android.content.Context

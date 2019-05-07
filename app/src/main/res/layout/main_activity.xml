@@ -13,15 +13,17 @@
             android:layout_height="match_parent"
             tools:context=".MainActivity">
 
-        <com.hugocastelani.waterfalltoolbar.WaterfallToolbar
+        <com.android.ms8.fingerprintcontrols.views.WaterfallToolbar
 
                 android:id="@+id/waterfall_toolbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:final_elevation="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:cardBackgroundColor="@color/backgroundLight"
                 app:layout_constraintVertical_bias="0">
 
             <android.support.v7.widget.Toolbar
@@ -31,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?actionBarSize"/>
 
-        </com.hugocastelani.waterfalltoolbar.WaterfallToolbar>
+        </com.android.ms8.fingerprintcontrols.views.WaterfallToolbar>
 
         <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"

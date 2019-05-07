@@ -1,11 +1,9 @@
 package com.android.ms8.fingerprintcontrols.data
 
-import android.app.Dialog
-import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.util.Log
 import android.view.View
-import com.android.ms8.fingerprintcontrols.AppActionsDialog
+import com.android.ms8.fingerprintcontrols.views.AppActionsDialog
 
 class AppInfo {
     var appName = ""

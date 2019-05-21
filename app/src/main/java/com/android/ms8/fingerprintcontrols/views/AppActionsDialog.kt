@@ -14,5 +14,16 @@ class AppActionsDialog(context: Context, private var appInfo: AppInfo) : Dialog(
         binding = DialogAppActionsBinding.inflate(LayoutInflater.from(context))
         binding.viewModel = appInfo
         setContentView(binding.root)
+
+        binding.btnCancel.setOnClickListener { dismiss() }
+        binding.btnSaveChanges.setOnClickListener{ saveChanges() }
+    }
+
+    private fun saveChanges() {
+        // Write new changes to file
+
+        //
+
+        // Dismiss dialog
     }
 }

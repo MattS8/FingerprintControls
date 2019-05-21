@@ -8,7 +8,7 @@
             android:layout_width="match_parent" android:layout_height="match_parent"
             tools:context=".pages.MainOptionsFragment"
             android:requiresFadingEdge="vertical"
-            android:fadingEdgeLength="50dp"
+            android:fadingEdgeLength="12dp"
             android:id="@+id/scrollview_main_options">
         <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"

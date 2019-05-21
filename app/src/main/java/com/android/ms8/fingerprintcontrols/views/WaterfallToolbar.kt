@@ -6,13 +6,13 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.RequiresApi
-import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ScrollView
+import android.widget.Toolbar
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.util.Dp
 import com.android.ms8.fingerprintcontrols.util.Px
@@ -30,7 +30,7 @@ import com.android.ms8.fingerprintcontrols.util.density
  * Time: 13:24
  */
 
-class WaterfallToolbar : CardView {
+class WaterfallToolbar : Toolbar {
     init {
         // set density to be able to use DimensionUnits
         // this code must run before all the signings using DimensionUnits
@@ -62,8 +62,8 @@ class WaterfallToolbar : CardView {
                             realPosition.value = animatedValue as Int
                             mutualScrollListenerAction()
                         }
-                        start()
                     }
+                    .start()
             }
         }
 
@@ -106,8 +106,8 @@ class WaterfallToolbar : CardView {
                             realPosition.value = animatedValue as Int
                             mutualScrollListenerAction()
                         }
-                        start()
                     }
+                    .start()
             }
         }
 
@@ -227,11 +227,11 @@ class WaterfallToolbar : CardView {
     }
 
     private fun init(context: Context?, attrs: AttributeSet?) {
-        // leave card corners square
-        radius = 0f
 
         if (context != null && attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.WaterfallToolbar)
+
+            clipToPadding = false
 
             val rawInitialElevation = typedArray.getDimensionPixelSize(
                 R.styleable.WaterfallToolbar_initial_elevation, defaultInitialElevation.value)
@@ -298,7 +298,7 @@ class WaterfallToolbar : CardView {
      * Speed up the card elevation setting
      */
     private fun adjustCardElevation() {
-        cardElevation = calculateElevation().value.toFloat()
+        z = calculateElevation().value.toFloat()
     }
 
     /**
@@ -325,7 +325,7 @@ class WaterfallToolbar : CardView {
         super.onSaveInstanceState()?.let {
             val savedState = SavedState(it)
 
-            savedState.elevation = cardElevation.toInt()
+            savedState.elevation = z.toInt()
             savedState.orthodoxPosition = orthodoxPosition
             savedState.realPosition = realPosition
 
@@ -347,7 +347,7 @@ class WaterfallToolbar : CardView {
             post {
                 // it's safe to use "!!" here, since savedState will
                 // always store values properly set in onSaveInstanceState()
-                cardElevation = state.elevation!!.toFloat()
+                z = state.elevation!!.toFloat()
                 orthodoxPosition = state.orthodoxPosition!!
                 realPosition = state.realPosition!!
             }

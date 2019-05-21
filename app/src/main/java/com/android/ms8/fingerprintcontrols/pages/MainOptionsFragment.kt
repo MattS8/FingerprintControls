@@ -23,11 +23,12 @@ class MainOptionsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
             = FragmentMainOptionsBinding.inflate(inflater, container, false)
-            .apply { this.config = listener?.getConfiguration() }
-            .apply { this.serviceEnabled.setOnClickListener { v -> toggleService((v as Switch).isChecked) } }
-            .apply { listener?.bindToolbar(this.scrollviewMainOptions) }
-            .apply { binding = this }.root
-
+            .apply {
+                this.config = listener?.getConfiguration()
+                this.serviceEnabled.setOnClickListener { v -> toggleService((v as Switch).isChecked) }
+                listener?.bindToolbar(this.scrollviewMainOptions)
+                binding = this
+            }.root
 
     /**
      * Starts the service-enabling process when bIsChecked is true and attempts to stop the service

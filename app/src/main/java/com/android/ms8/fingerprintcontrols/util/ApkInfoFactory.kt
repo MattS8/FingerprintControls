@@ -24,9 +24,78 @@ object ApkInfoFactory {
     var AppInfoHashMap : HashMap<String, AppInfo> = HashMap()
 
     /**
+     * Fetches saved list of modified apps and all apps on device
+     */
+    class GetAppsTask(ref: AsyncResponse?, context: Context?) : AsyncTask<Int, Nothing, Pair<ArrayList<AppInfo>, HashMap<String, AppInfo>> >() {
+        var context : WeakReference<Context?> = WeakReference(context)
+        var response : WeakReference<AsyncResponse?> = WeakReference(ref)
+
+        override fun doInBackground(vararg params: Int?): Pair<ArrayList<AppInfo>, HashMap<String, AppInfo>>? {
+            var appActionsStr = ""
+
+            // Attempt to open file containing custom application actions
+            try {
+                val bufferedReader = BufferedReader(InputStreamReader(context.get()?.openFileInput("CustomAppActions")))
+
+                // Read in saved list of apps with custom actions from internal storage
+                val stringBuilder = StringBuilder()
+                var line: String? = bufferedReader.readLine()
+                while (line != null)
+                    stringBuilder
+                        .append(line)
+                        .also { line = bufferedReader.readLine() }
+
+                // Save to string variable for future conversion
+                appActionsStr = stringBuilder.toString()
+            } catch (e : Exception) { Log.w("test####", e.message) }
+
+            // Exit early if context reference is gone
+            if (context.get() == null)
+                return Pair(ArrayList(), HashMap())
+
+            // Get hash map of all apps by name
+            val allApps = getAllInstalledApkInfo(context.get())
+
+            // Convert JSON string to Hashmap (empty list if no previously modified apps)
+            val modifiedApps = if (appActionsStr != "") Gson().fromJson(appActionsStr, HashMap<String, AppInfo>()::class.java)
+            else HashMap()
+
+            // Initialize list of all apps (return value)
+            val allAppsList = ArrayList<AppInfo>()
+
+            // Remove previously modified apps from all-apps list
+            modifiedApps.forEach{
+                if (allApps.contains(it.key)) {
+                    allApps.remove(it.key)
+                }
+
+                // Add modified app to all-apps list
+                allAppsList.add(it.value)
+            }
+
+            // Add the rest of the apps to all-apps list
+            allAppsList.addAll(allApps.values)
+
+            // Add the modified apps to hashmap
+            allApps.putAll(modifiedApps)
+
+            return Pair(allAppsList, allApps)
+        }
+
+        override fun onPostExecute(result: Pair<ArrayList<AppInfo>, HashMap<String, AppInfo>>?) {
+            result?.let {
+                response.get()?.appListReceived(it.first)
+                AppInfoList.postValue(it.first)
+                AppInfoHashMap = it.second
+            }
+        }
+    }
+
+
+    /**
      * Returns a list of package names of all installed apps (excluding system apps).
      */
-    fun getAllInstalledApkInfo(context : Context?) : HashMap<String, AppInfo> {
+    private fun getAllInstalledApkInfo(context : Context?) : HashMap<String, AppInfo> {
         val apkInfo = HashMap<String, AppInfo>()
         val intent = Intent(Intent.ACTION_MAIN, null)
             .apply {  addCategory(Intent.CATEGORY_LAUNCHER)}
@@ -73,74 +142,6 @@ object ApkInfoFactory {
         } catch (e : PackageManager.NameNotFoundException ) {
             Log.e("ApkInfoFactory", e.stackTrace.toString())
             ""
-        }
-    }
-
-    /**
-     * Fetches saved list of modified apps and all apps on device
-     */
-    class GetAppsTask(ref: AsyncResponse?, context: Context?) : AsyncTask<Int, Nothing, Pair<ArrayList<AppInfo>, HashMap<String, AppInfo>> >() {
-        var context : WeakReference<Context?> = WeakReference(context)
-        var response : WeakReference<AsyncResponse?> = WeakReference(ref)
-
-        override fun doInBackground(vararg params: Int?): Pair<ArrayList<AppInfo>, HashMap<String, AppInfo>>? {
-            var appActionsStr = ""
-
-            // Attempt to open file containing custom application actions
-            try {
-                val bufferedReader = BufferedReader(InputStreamReader(context.get()?.openFileInput("CustomAppActions")))
-
-                // Read in saved list of apps with custom actions from internal storage
-                val stringBuilder = StringBuilder()
-                var line: String? = bufferedReader.readLine()
-                while (line != null)
-                    stringBuilder
-                        .append(line)
-                        .also { line = bufferedReader.readLine() }
-
-                // Save to string variable for future conversion
-                appActionsStr = stringBuilder.toString()
-            } catch (e : Exception) { Log.w("test####", e.message) }
-
-            // Exit early if context reference is gone
-            if (context.get() == null)
-                return Pair(ArrayList(), HashMap())
-
-            // Get hash map of all apps by name
-            val allApps = getAllInstalledApkInfo(context.get())
-
-            // Convert JSON string to Hashmap (empty list if no previously modified apps)
-            val modifiedApps = if (appActionsStr != "") Gson().fromJson(appActionsStr, HashMap<String, AppInfo>()::class.java)
-                               else HashMap()
-
-            // Initialize list of all apps (return value)
-            val allAppsList = ArrayList<AppInfo>()
-
-            // Remove previously modified apps from all-apps list
-            modifiedApps.forEach{
-                if (allApps.contains(it.key)) {
-                    allApps.remove(it.key)
-                }
-
-                // Add modified app to all-apps list
-                allAppsList.add(it.value)
-            }
-
-            // Add the rest of the apps to all-apps list
-            allAppsList.addAll(allApps.values)
-
-            // Add the modified apps to hashmap
-            allApps.putAll(modifiedApps)
-
-            return Pair(allAppsList, allApps)
-        }
-
-        override fun onPostExecute(result: Pair<ArrayList<AppInfo>, HashMap<String, AppInfo>>?) {
-            result?.let {
-                response.get()?.appListReceived(it.first)
-                AppInfoList.postValue(it.first)
-                AppInfoHashMap = it.second
-            }
         }
     }
 

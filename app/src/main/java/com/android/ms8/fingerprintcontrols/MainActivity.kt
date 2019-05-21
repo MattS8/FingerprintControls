@@ -231,17 +231,17 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     //TODO fix WaterfallToolbar so that it doesn't crash when rebinding scrolling component
     override fun bindToolbar(recyclerView: RecyclerView) {
         unbindToolbar()
-        waterfall_toolbar.recyclerView = recyclerView
+        toolbar.recyclerView = recyclerView
     }
 
     override fun bindToolbar(scrollView: ScrollView) {
         unbindToolbar()
-        waterfall_toolbar.scrollView = scrollView
+        toolbar.scrollView = scrollView
     }
 
     override fun unbindToolbar() {
-        waterfall_toolbar.recyclerView = null
-        waterfall_toolbar.scrollView = null
+        toolbar.recyclerView = null
+        toolbar.scrollView = null
     }
 
     companion object {

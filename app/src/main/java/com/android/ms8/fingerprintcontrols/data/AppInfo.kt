@@ -1,9 +1,10 @@
 package com.android.ms8.fingerprintcontrols.data
 
 import android.net.Uri
-import android.util.Log
 import android.view.View
+import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
 import com.android.ms8.fingerprintcontrols.views.AppActionsDialog
+import java.lang.ref.WeakReference
 
 class AppInfo {
     var appName = ""
@@ -34,16 +35,29 @@ class AppInfo {
 
     /** Shows a dialog allowing the user to change gesture actions for application **/
     fun onAppClicked(view: View) {
-        Log.d("test####", "onAppClicked: $appName")
         AppActionsDialog(view.context, this).show()
+    }
+
+    /**
+     * Resets app info to default settings.
+     * NOTE: This function calls a background task to write updated ModifiedApps list to file.
+     **/
+    fun onAppResetClicked(view: View) {
+        swipeUpAction = ACTION_SAME_AS_DEFAULT
+        swipeDownAction = ACTION_SAME_AS_DEFAULT
+        swipeLeftAction = ACTION_SAME_AS_DEFAULT
+        swipeRightAction = ACTION_SAME_AS_DEFAULT
+
+        ApkInfoFactory.replaceAppInfo(this, WeakReference(view.context))
     }
 
     /** Returns the number of custom actions bound to this application **/
     private fun getNumOfCustomActions() : Int {
-        var numActions = if (swipeUpAction == ACTION_SAME_AS_DEFAULT) 1 else 0
-        numActions += if (swipeDownAction == ACTION_SAME_AS_DEFAULT) 1 else 0
-        numActions += if (swipeLeftAction == ACTION_SAME_AS_DEFAULT) 1 else 0
-        numActions += if (swipeRightAction == ACTION_SAME_AS_DEFAULT) 1 else 0
+        var numActions = 0
+        numActions += if (swipeUpAction != ACTION_SAME_AS_DEFAULT) 1 else 0
+        numActions += if (swipeDownAction != ACTION_SAME_AS_DEFAULT) 1 else 0
+        numActions += if (swipeLeftAction != ACTION_SAME_AS_DEFAULT) 1 else 0
+        numActions += if (swipeRightAction != ACTION_SAME_AS_DEFAULT) 1 else 0
 
         return numActions
     }
@@ -54,6 +68,31 @@ class AppInfo {
         appName = name
         packageName = pName
         iconUri = pIconUri
+    }
+
+    override fun toString(): String {
+        return "AppInfo name: $appName\nAppInfo packageName: $packageName" +
+                "\n\tNumberOfCustomActions: $numberOfCustomActions" +
+                "\n\tSwipeUpAction (int id): $swipeUpAction" +
+                "\n\tSwipeDownAction (int id): $swipeDownAction" +
+                "\n\tSwipeLeftAction (int id): $swipeLeftAction" +
+                "\n\tSwipeRightAction (int id): $swipeRightAction"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other != null && other is AppInfo && other.packageName == packageName
+    }
+
+    override fun hashCode(): Int {
+        var result = appName.hashCode()
+        result = 31 * result + packageName.hashCode()
+        result = 31 * result + (iconUri?.hashCode() ?: 0)
+        result = 31 * result + numberOfCustomActions
+        result = 31 * result + swipeUpAction
+        result = 31 * result + swipeDownAction
+        result = 31 * result + swipeLeftAction
+        result = 31 * result + swipeRightAction
+        return result
     }
 
     companion object {

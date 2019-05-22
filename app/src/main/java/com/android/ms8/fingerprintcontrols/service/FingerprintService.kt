@@ -53,10 +53,8 @@ class FingerprintService : AccessibilityService() {
     override fun onInterrupt() {}
 
     override fun onAccessibilityEvent(event : AccessibilityEvent) {
-        if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || event.className == null) {
-            //Log.d("DEBUG-S", "Wrong event")
+        if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || event.className == null)
             return
-        }
 
         val className = event.className
         Log.d("DEBUG-S", "Event = $className")
@@ -69,7 +67,6 @@ class FingerprintService : AccessibilityService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("DEBUG-S", "onDestroy was called!")
         gestureController?.unregisterFingerprintGestureCallback(fingerprintCallback)
         self = null
     }
@@ -88,8 +85,6 @@ class FingerprintService : AccessibilityService() {
         PreferenceManager.getDefaultSharedPreferences(this).edit().remove(CONFIG)
             .putString(CONFIG, Gson().toJson(config))
             .apply()
-
-        Log.d("DEBUG-S", "onCreate was called!")
     }
 
 

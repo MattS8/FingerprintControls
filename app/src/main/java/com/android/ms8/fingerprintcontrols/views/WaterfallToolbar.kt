@@ -8,10 +8,8 @@ import android.os.Parcelable
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.widget.ScrollView
 import android.widget.Toolbar
 import com.android.ms8.fingerprintcontrols.R
@@ -92,7 +90,6 @@ class WaterfallToolbar : Toolbar {
                 {
                     // Save ScrollView height position
                     lastScrollViewPos = realPosition.value
-                    Log.d("test%%%", "savedScrollViewPos = $lastScrollViewPos")
                     removeScrollViewScrollListener()
                     field = value
                 }

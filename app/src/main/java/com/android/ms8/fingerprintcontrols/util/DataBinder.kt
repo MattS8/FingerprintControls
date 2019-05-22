@@ -1,6 +1,5 @@
 package com.android.ms8.fingerprintcontrols.util
 
-import android.content.ContentResolver
 import android.databinding.BindingAdapter
 import android.net.Uri
 import android.view.View
@@ -9,7 +8,7 @@ import android.widget.TextView
 import com.android.ms8.fingerprintcontrols.R
 import com.bumptech.glide.Glide
 
-    @BindingAdapter("iconUri")
+@BindingAdapter("iconUri")
     fun setIconUri(imageView: ImageView, uri: Uri) {
         Glide.with(imageView.context).load(uri).into(imageView)
     }

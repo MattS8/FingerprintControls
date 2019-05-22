@@ -8,13 +8,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
-import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
 import com.android.ms8.fingerprintcontrols.MainActivity
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.databinding.FragmentMainOptionsBinding
+import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
 import com.android.ms8.fingerprintcontrols.service.FingerprintService
 
 class MainOptionsFragment : Fragment() {
@@ -26,16 +25,20 @@ class MainOptionsFragment : Fragment() {
             .apply {
                 this.config = listener?.getConfiguration()
                 this.serviceEnabled.setOnClickListener { v -> toggleService((v as Switch).isChecked) }
+                this.btnToDefaults.setOnClickListener{resetToDefaults()}
                 listener?.bindToolbar(this.scrollviewMainOptions)
                 binding = this
             }.root
+
+    private fun resetToDefaults() {
+        TODO("Not yet implemented")
+    }
 
     /**
      * Starts the service-enabling process when bIsChecked is true and attempts to stop the service
      * when bIsChecked is false
      */
     private fun toggleService(bIsChecked: Boolean) {
-        Log.d("test###", "toggleService($bIsChecked) was called!")
         when {
             bIsChecked ->
                 activity?.requestPermissions(arrayOf(getFingerprintPermission()), MainActivity.REQ_FINGERPRINT)

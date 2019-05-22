@@ -27,6 +27,7 @@ import com.android.ms8.fingerprintcontrols.service.FingerprintService
 import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.main_activity.*
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     lateinit var binding : MainActivityBinding
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         binding.lifecycleOwner = this
 
         // Start background task to fetch AppInfo
-        ApkInfoFactory.GetAppsTask(null, this).execute()
+        ApkInfoFactory.getApps(null, WeakReference(this))
 
         // Get saved/default configuration file
         config = ConfigurationObservable(

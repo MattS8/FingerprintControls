@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import com.android.ms8.fingerprintcontrols.data.AppInfo
 import com.android.ms8.fingerprintcontrols.databinding.DialogAppActionsBinding
+import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
+import java.lang.ref.WeakReference
 
 class AppActionsDialog(context: Context, private var appInfo: AppInfo) : Dialog(context) {
     lateinit var binding : DialogAppActionsBinding
@@ -20,10 +22,10 @@ class AppActionsDialog(context: Context, private var appInfo: AppInfo) : Dialog(
     }
 
     private fun saveChanges() {
-        // Write new changes to file
-
-        //
+        // Replace app info if changes were made
+        ApkInfoFactory.replaceAppInfo(appInfo, WeakReference(context))
 
         // Dismiss dialog
+        dismiss()
     }
 }

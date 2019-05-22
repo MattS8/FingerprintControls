@@ -19,7 +19,8 @@
                 android:contentDescription="@string/application_icon"
                 app:iconUri="@{viewModel.iconUri}"
                 android:layout_marginTop="8dp"
-                android:layout_weight=".05"/>
+                android:layout_weight=".05"
+                android:onClick="@{(v) -> viewModel.onAppClicked(v)}"/>
 
         <LinearLayout android:layout_width="0dp"
                       android:layout_height="wrap_content"
@@ -70,6 +71,7 @@
                 style="@android:style/Widget.Material.ImageButton"
                 app:numberOfCustomActions="@{viewModel.numberOfCustomActions}"
                 android:background="?android:selectableItemBackgroundBorderless" android:alpha=".56"
+                android:onClick="@{(v) -> viewModel.onAppResetClicked(v)}"
                 android:contentDescription="@string/delete_custom_actions"/>
     </LinearLayout>
 </layout>

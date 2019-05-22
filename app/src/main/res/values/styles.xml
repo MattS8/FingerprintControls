@@ -5,8 +5,34 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/backgroundWhite</item>
+        <item name="android:fontFamily">@font/robot_regular</item>
     </style>
 
     <style name="AppTheme" parent="Base.V0.AppTheme"/>
+
+    <!-- Toolbar Styles -->
+
+    <style name="Base.V0.ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:fontFamily">@font/roboto_light</item>
+    </style>
+
+    <style name="AppTheme.Toolbar" parent="Base.V0.ToolbarTheme"/>
+
+
+    <!-- TextView Styles -->
+
+    <style name="Base.V0.TextAppearance.SpinnerTitle" parent="TextAppearance.MaterialComponents.Body2"/>
+
+    <style name="AppTheme.TextAppearance.SpinnerTitle" parent="Base.V0.TextAppearance.SpinnerTitle">
+        <item name="android:textColor">@color/spinner_title</item>
+        <item name="android:fontFamily">@font/roboto_light</item>
+    </style>
+
+    <style name="Base.V0.TextAppearance.SubHeader" parent="TextAppearance.MaterialComponents.Headline6"/>
+
+    <style name="AppTheme.TextAppearance.SubHeader" parent="Base.V0.TextAppearance.SubHeader">
+        <item name="android:fontFamily">@font/robot_regular</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 
 </resources>

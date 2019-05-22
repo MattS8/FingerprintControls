@@ -15,37 +15,47 @@
                 android:layout_height="wrap_content">
             <Switch
                     android:text="@string/service_enabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/serviceEnabled"
-                    app:layout_constraintTop_toBottomOf="@+id/title_general_options"
-                    app:layout_constraintStart_toStartOf="@+id/title_general_options"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/serviceEnabled"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:focusable="true"
                     android:clickable="true"
                     android:checked="@={config.bServiceEnabled}"
-                    app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="@dimen/spinner_vertical_margin" android:switchPadding="16dp"/>
+                    android:layout_marginEnd="@dimen/list_margin_start"
+                    android:layout_marginStart="@dimen/list_margin_start"
+                    android:layout_marginTop="@dimen/spinner_vertical_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"/>
             <Switch
                     android:text="@string/recent_app_actions_enabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/recentActionsEnabled"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/recentActionsEnabled"
                     android:checked="@={config.bRecentActionsEnabled}"
+                    android:layout_marginStart="@dimen/list_margin_start"
                     app:layout_constraintTop_toBottomOf="@+id/serviceEnabled"
-                    app:layout_constraintStart_toStartOf="@+id/title_general_options"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginEnd="@dimen/list_margin_start"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="@dimen/spinner_vertical_margin"
-                    app:layout_constraintBottom_toTopOf="@+id/title_app_actions" android:switchPadding="16dp"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:layout_marginTop="@dimen/spinner_vertical_margin"
+                    app:layout_constraintBottom_toTopOf="@+id/title_app_actions"
+                    android:switchPadding="16dp"/>
             <TextView
                     android:text="@string/swipe_right"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/title_default_swipe_right"
-                    app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                    app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_left"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_right"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
@@ -60,13 +70,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/title_default_swipe_left"
-                    app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                    app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_down"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_left"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
@@ -79,7 +90,7 @@
 
 
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_up"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
@@ -89,7 +100,7 @@
 
             </Spinner>
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_default_swipe_down"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
@@ -102,19 +113,25 @@
                     android:text="@string/swipe_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/title_default_swipe_down" app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                    android:id="@+id/title_default_swipe_down"
+                    app:layout_constraintStart_toStartOf="@+id/title_default_swipe_up"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_up"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
             <TextView
                     android:text="@string/swipe_up"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/title_default_swipe_up" app:layout_constraintStart_toStartOf="@+id/title_app_actions"
+                    android:id="@+id/title_default_swipe_up"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/list_margin_start"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                    android:layout_marginTop="@dimen/spinner_vertical_margin" app:layout_constraintTop_toBottomOf="@+id/title_app_actions"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    android:layout_marginTop="@dimen/spinner_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@+id/title_app_actions"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
 
             <!-- Recent App Action Spinners -->
             <TextView
@@ -122,14 +139,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/title_recent_swipe_right"
-                    app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                    app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"
                     android:enabled="@{config.bRecentActionsEnabled}"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_recent_swipe_left"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_recent_swipe_right"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
@@ -144,14 +162,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/title_recent_swipe_left"
-                    app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                    app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_recent_swipe_down"
                     android:enabled="@{config.bRecentActionsEnabled}"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_recent_swipe_left"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      android:enabled="@{config.bRecentActionsEnabled}"
@@ -166,7 +185,7 @@
 
 
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_recent_swipe_up"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      android:enabled="@{config.bRecentActionsEnabled}"
@@ -178,7 +197,7 @@
 
             </Spinner>
             <Spinner android:layout_width="0dp" android:layout_height="wrap_content"
-                     app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                     app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                      app:layout_constraintTop_toBottomOf="@+id/title_recent_swipe_down"
                      app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="@dimen/spinner_margin_end"
                      app:layout_constraintHorizontal_bias="0.0" android:spinnerMode="dialog"
@@ -192,35 +211,28 @@
                     android:text="@string/swipe_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/title_recent_swipe_down" app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                    android:id="@+id/title_recent_swipe_down" app:layout_constraintStart_toStartOf="@+id/title_recent_swipe_up"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"
                     android:enabled="@{config.bRecentActionsEnabled}"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_recent_swipe_up"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
             <TextView
                     android:text="@string/swipe_up"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/title_recent_swipe_up" app:layout_constraintStart_toStartOf="@+id/title_recent_app_actions"
+                    android:id="@+id/title_recent_swipe_up" app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/list_margin_start"
                     android:enabled="@{config.bRecentActionsEnabled}"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     android:layout_marginTop="@dimen/spinner_vertical_margin" app:layout_constraintTop_toBottomOf="@+id/title_recent_app_actions"
-                    app:layout_constraintHorizontal_bias="0.0"/>
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SpinnerTitle"/>
 
 
 
             <!-- Titles -->
-            <TextView
-                    android:text="@string/general_options"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/title_general_options" app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginStart="@dimen/options_horizontal_margin" app:layout_constraintHorizontal_bias="0.0"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    app:layout_constraintTop_toTopOf="parent" android:textStyle="bold"
-                    android:layout_marginTop="16dp"/>
 
             <TextView
                     android:text="@string/recent_app_actions"
@@ -229,10 +241,10 @@
                     android:id="@+id/title_recent_app_actions" app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:enabled="@{config.bRecentActionsEnabled}"
-                    android:layout_marginStart="@dimen/options_horizontal_margin" app:layout_constraintHorizontal_bias="0.0"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SubHeader"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_default_swipe_right"
-                    android:layout_marginTop="@dimen/header_vertical_margin" android:textStyle="bold"/>
+                    android:layout_marginTop="@dimen/header_vertical_margin" android:fontFamily="@font/robot_regular"/>
 
             <TextView
                     android:text="@string/default_swipe_actions"
@@ -241,12 +253,12 @@
                     android:id="@+id/title_app_actions"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginStart="@dimen/options_horizontal_margin"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:textAppearance="@style/AppTheme.TextAppearance.SubHeader"
                     app:layout_constraintTop_toBottomOf="@+id/recentActionsEnabled"
                     android:layout_marginTop="@dimen/header_vertical_margin"
-                    app:layout_constraintBottom_toTopOf="@+id/title_default_swipe_up" android:textStyle="bold"/>
+                    app:layout_constraintBottom_toTopOf="@+id/title_default_swipe_up"
+                    android:fontFamily="@font/robot_regular"/>
             <Button
                     android:text="@string/reset_main_options"
                     android:layout_width="wrap_content"

@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.widget.ScrollView
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
@@ -72,9 +73,8 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                         updateConfig()
 
                         // Start service if no service is running
-                        when {
-                            FingerprintService.getServiceObject() == null ->
-                                startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), RES_ACCESSIBILITY)
+                        when (FingerprintService.getServiceObject() == null) {
+                            true -> startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), RES_ACCESSIBILITY)
                             else -> {}
                         }
                     }
@@ -210,7 +210,10 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
             R.id.navigation_main_options -> getString(R.string.title_main_options)
             R.id.navigation_app_actions -> getString(R.string.title_app_actions)
             R.id.navigation_about -> getString(R.string.title_help)
-            else -> "ERROR"
+            else -> {
+                Log.e("GetPageTitle", "Unknown id: $page")
+                "ERROR"
+            }
         }
     }
 

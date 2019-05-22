@@ -11,7 +11,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ScrollView
-import android.widget.Toolbar
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.util.Dp
 import com.android.ms8.fingerprintcontrols.util.Px
@@ -29,7 +28,7 @@ import com.android.ms8.fingerprintcontrols.util.density
  * Time: 13:24
  */
 
-class WaterfallToolbar : Toolbar {
+class WaterfallToolbar : android.support.v7.widget.Toolbar {
     init {
         // set density to be able to use DimensionUnits
         // this code must run before all the signings using DimensionUnits

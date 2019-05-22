@@ -18,12 +18,14 @@
                 android:layout_width="0dp"
                 android:layout_height="?actionBarSize"
                 app:final_elevation="16dp"
+                tools:title="Test Tile"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@color/backgroundWhite"
-                app:layout_constraintVertical_bias="0"/>
+                app:layout_constraintVertical_bias="0"
+                android:theme="@style/AppTheme.Toolbar"/>
 
         <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"

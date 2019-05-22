@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.ScrollView
 import android.widget.Toolbar
@@ -57,7 +58,7 @@ class WaterfallToolbar : Toolbar {
                 ValueAnimator.ofInt(realPosition.value, lastRecyclerViewPos)
                     .apply {
                         duration = 600
-                        interpolator = DecelerateInterpolator()
+                        interpolator = AccelerateDecelerateInterpolator()
                         addUpdateListener {
                             realPosition.value = animatedValue as Int
                             mutualScrollListenerAction()
@@ -101,7 +102,7 @@ class WaterfallToolbar : Toolbar {
                 ValueAnimator.ofInt(realPosition.value, lastScrollViewPos)
                     .apply {
                         duration = 600
-                        interpolator = DecelerateInterpolator()
+                        interpolator = AccelerateDecelerateInterpolator()
                         addUpdateListener {
                             realPosition.value = animatedValue as Int
                             mutualScrollListenerAction()

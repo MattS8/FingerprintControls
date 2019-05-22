@@ -12,6 +12,7 @@ import android.preference.PreferenceManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.android.ms8.fingerprintcontrols.data.AppInfo
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_BACK
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_HOME
@@ -23,6 +24,7 @@ import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_S
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_LEFT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_RIGHT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_UP
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_DEFAULT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_BACK
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_HOME
@@ -31,17 +33,18 @@ import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_POWER_MENU
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_QUICK_SETTINGS
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_RECENTS
-import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SAME_AS_DEFAULT_ACTION
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_DEFAULT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_DOWN
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_LEFT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_RIGHT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_UP
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SELECT_APP
+import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
 import com.google.gson.Gson
 
 class FingerprintService : AccessibilityService() {
     private var gestureController : FingerprintGestureController? = null
-    private var fingerprintCallback : FingerprintGestureController.FingerprintGestureCallback? = null
+    private var fingerprintCallback : FingerprintGestureCallback? = null
     private var gestureDetectionAvailable : Boolean = false
     private var recentsShown : Boolean = false
 
@@ -50,29 +53,30 @@ class FingerprintService : AccessibilityService() {
     private var leftSideOfScreen: Int = 0
     private var middleXValue: Int = 0
 
+    private var appInfo : AppInfo? = null
+    //todo switch to singleton usage of configuration across app/service
+    //private var configuration  = getConfig()
+
     override fun onInterrupt() {}
 
     override fun onAccessibilityEvent(event : AccessibilityEvent) {
-        if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || event.className == null)
+        Log.d("DEBUG-S", "event.packageName = ${event.packageName}, event.className = ${event.className}, event.type = ${event.eventType}")
+        // Check if "Recents" page is being shown
+        recentsShown = bIsRecentsBeingShown(event.className)
+
+        // Exit early if event isn't worth checking against custom apps
+        if (!bIsProperActivity(event.className))
             return
 
-        val className = event.className
-        Log.d("DEBUG-S", "Event = $className")
-        recentsShown = (className == "com.android.internal.policy.impl.RecentApplicationsDialog"
-                || className == "com.android.systemui.recent.RecentsActivity"
-                || className == "com.android.systemui.recents.RecentsActivity"
-                || className == "com.android.quickstep.RecentsActivity"
-                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P  && className == "com.google.android.apps.nexuslauncher.NexusLauncherActivity"))
+        appInfo = ApkInfoFactory.AppInfoHashMap[event.packageName]
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroy() = super.onDestroy().also {
         gestureController?.unregisterFingerprintGestureCallback(fingerprintCallback)
         self = null
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onCreate() = super.onCreate().also {
         // Set static variable to this running service
         self = this
 
@@ -100,20 +104,18 @@ class FingerprintService : AccessibilityService() {
         if (fingerprintCallback != null || !gestureDetectionAvailable)
             return
 
-        fingerprintCallback = object : FingerprintGestureController.FingerprintGestureCallback() {
+        fingerprintCallback = object : FingerprintGestureCallback() {
             override fun onGestureDetectionAvailabilityChanged(available: Boolean) { gestureDetectionAvailable = available }
 
-            override fun onGestureDetected(gesture: Int) {
-                onSwipe(gesture)
-            }
+            override fun onGestureDetected(gesture: Int) { onSwipe(gesture) }
         }
-        gestureController?.registerFingerprintGestureCallback(fingerprintCallback, null)
+        gestureController?.registerFingerprintGestureCallback(fingerprintCallback!!, null)
     }
 
     private fun onSwipe(swipeDirection : Int) {
         val config = getConfig()
 
-        // Do nothing is service is not enabled
+        // Do nothing if service is not enabled
         if (!config.bServiceEnabled)
             return
 
@@ -161,7 +163,7 @@ class FingerprintService : AccessibilityService() {
             RECENTS_ACTION_SCROLL_UP -> performAction(ACTION_SCROLL_UP)
             RECENTS_ACTION_SCROLL_DOWN -> performAction(ACTION_SCROLL_DOWN)
             RECENTS_ACTION_SELECT_APP -> actionTapCenter()
-            RECENTS_ACTION_SAME_AS_DEFAULT_ACTION -> when(swipeDirection) {
+            RECENTS_ACTION_DEFAULT -> when(swipeDirection) {
                 FINGERPRINT_GESTURE_SWIPE_DOWN -> performAction(getConfig().swipeDownAction)
                 FINGERPRINT_GESTURE_SWIPE_UP -> performAction(getConfig().swipeUpAction)
                 FINGERPRINT_GESTURE_SWIPE_RIGHT -> performAction(getConfig().swipeRightAction)
@@ -250,6 +252,30 @@ class FingerprintService : AccessibilityService() {
     }
 
     /* ------------------------------------------ Simple helper functions ------------------------------------------ */
+
+    /**
+     * Ensures <p>className</p> is viable for comparision against app package names.
+     *
+     * @param className name of class that triggered <c> AccessibilityEvent </c>
+     *
+     * @return <t>true</t> if className is potentially an app package name, <t>false</t> otherwise
+     */
+    private fun bIsProperActivity(className: CharSequence?): Boolean =
+        className != null && className != "" && !className.startsWith("android.")
+
+
+    /**
+     * Checks class name against known packages pertaining to the "Recents" page.
+     *
+     * @param className name of class that triggered <c> AccessibilityEvent </c>
+     *
+     * @return <t>true</t> if className matches known "Recents" page package names, <t>false</t> otherwise
+     */
+    private fun bIsRecentsBeingShown(className: CharSequence?): Boolean =
+        className == "com.android.internal.policy.impl.RecentApplicationsDialog"
+                || className == "com.android.systemui.recent.RecentsActivity"
+                || className == "com.android.systemui.recents.RecentsActivity"
+                || className == "com.android.quickstep.RecentsActivity"
 
     private fun getConfig() : Configuration {
         val configJSON = PreferenceManager.getDefaultSharedPreferences(this)

@@ -62,7 +62,19 @@ class Configuration(observable: ConfigurationObservable?) {
         const val RECENTS_ACTION_NOTIFICATIONS = 9
         const val RECENTS_ACTION_POWER_MENU = 10
         const val RECENTS_ACTION_QUICK_SETTINGS = 11
-        const val RECENTS_ACTION_SAME_AS_DEFAULT_ACTION = 12
+        const val RECENTS_ACTION_DEFAULT = 12
 
+        const val APP_ACTION_NONE = 0
+        const val APP_ACTION_BACK = 1
+        const val APP_ACTION_HOME = 2
+        const val APP_ACTION_RECENTS = 3
+        const val APP_ACTION_NOTIFICATIONS = 4
+        const val APP_ACTION_POWER_MENU = 5
+        const val APP_ACTION_QUICK_SETTINGS = 6
+        const val APP_ACTION_SCROLL_LEFT = 7
+        const val APP_ACTION_SCROLL_RIGHT = 8
+        const val APP_ACTION_SCROLL_UP = 9
+        const val APP_ACTION_SCROLL_DOWN = 10
+        const val APP_ACTION_DEFAULT = 11
     }
 }

@@ -22,7 +22,7 @@ import java.lang.reflect.Type
 object ApkInfoFactory {
     val AppInfoList : MutableLiveData<AdapterList<AppInfo>> = MutableLiveData()
     var AppInfoHashMap : HashMap<String, AppInfo> = HashMap()
-    private var ModifiedApps : ArrayList<AppInfo> = ArrayList()
+    var ModifiedApps : ArrayList<AppInfo> = ArrayList()
 
     /**
      * Populates the list of applications running on device and custom action information.
@@ -103,7 +103,7 @@ object ApkInfoFactory {
         val resolveInfoList = context?.packageManager?.queryIntentActivities(intent, 0)
 
         resolveInfoList?.forEach{
-            if (!isSystemPackage(it))
+
                 apkInfo[it.activityInfo.packageName] = AppInfo(
                     it.activityInfo.loadLabel(context.packageManager).toString(),
                     it.activityInfo.packageName,
@@ -139,7 +139,7 @@ object ApkInfoFactory {
 
             // Save to string variable for future conversion
             fileStr = stringBuilder.toString()
-        } catch (e : Exception) { Log.w("ApkInfoFactory", e.message) }
+        } catch (e : Exception) { Log.e("ApkInfoFactory", e.message) }
 
 
         return fileStr
@@ -222,6 +222,11 @@ object ApkInfoFactory {
 
             // Add the rest of the apps to all-apps list
             allAppsList.addAll(allApps.values)
+
+            // Add the modified apps back to list
+            ModifiedApps.forEach {
+                allApps[it.packageName] = it
+            }
 
             return Pair(allAppsList, allApps)
         }

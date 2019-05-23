@@ -121,22 +121,17 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         )
         binding.configuration = config
 
-        // Get copy of saved/default configuration file
-        val config = binding.configuration
-
         // Set bottom nav bar listener
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         // Load last viewed page
-        config?.currentPage?.get()?.let { loadFragment(it) }
+        loadFragment(config.currentPage.get())
 
         // Set bottom nav bar to last viewed page
-        navigation.selectedItemId = config?.currentPage?.get() ?: R.id.navigation_main_options
-
-        // todo Link toolbar with scroll view
+        navigation.selectedItemId = config.currentPage.get()
 
         // Set title based on selected page
-        toolbar.title = getPageTitle(config?.currentPage?.get())
+        toolbar.title = getPageTitle(config.currentPage.get())
 
         // Add callbacks for spinners to detect changes instantly
         addSpinnerCallbacks()
@@ -146,6 +141,15 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
 
     /** Adds callback to all spinners that updates config immediately after change **/
     private fun addSpinnerCallbacks() {
+        config.bUserEnabledService.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                if (config.bUserEnabledService.get() && !config.bServiceEnabled.get()) {
+                    config.bUserEnabledService.set(false)
+                }
+                updateConfig()
+            }
+        })
+
         config.swipeDownAction.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) = updateConfig()
         })
@@ -232,7 +236,6 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         return config
     }
 
-    //TODO fix WaterfallToolbar so that it doesn't crash when rebinding scrolling component
     override fun bindToolbar(recyclerView: RecyclerView) {
         unbindToolbar()
         toolbar.recyclerView = recyclerView

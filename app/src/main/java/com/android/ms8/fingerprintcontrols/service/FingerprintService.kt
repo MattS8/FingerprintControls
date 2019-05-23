@@ -16,6 +16,7 @@ import com.android.ms8.fingerprintcontrols.data.AppInfo
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_BACK
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_HOME
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_NONE
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_NOTIFICATIONS
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_POWER_MENU
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_QUICK_SETTINGS
@@ -24,7 +25,18 @@ import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_S
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_LEFT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_RIGHT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.ACTION_SCROLL_UP
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_BACK
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_DEFAULT
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_HOME
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_NONE
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_NOTIFICATIONS
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_POWER_MENU
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_QUICK_SETTINGS
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_RECENTS
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_SCROLL_DOWN
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_SCROLL_LEFT
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_SCROLL_RIGHT
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_SCROLL_UP
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_BACK
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_HOME
@@ -32,7 +44,7 @@ import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_NOTIFICATIONS
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_POWER_MENU
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_QUICK_SETTINGS
-import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_RECENTS
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_PREVIOUS_APP
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_DEFAULT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_DOWN
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_LEFT
@@ -55,20 +67,23 @@ class FingerprintService : AccessibilityService() {
 
     private var appInfo : AppInfo? = null
     //todo switch to singleton usage of configuration across app/service
-    //private var configuration  = getConfig()
 
     override fun onInterrupt() {}
 
     override fun onAccessibilityEvent(event : AccessibilityEvent) {
-        Log.d("DEBUG-S", "event.packageName = ${event.packageName}, event.className = ${event.className}, event.type = ${event.eventType}")
         // Check if "Recents" page is being shown
         recentsShown = bIsRecentsBeingShown(event.className)
 
         // Exit early if event isn't worth checking against custom apps
-        if (!bIsProperActivity(event.className))
+        if (!bIsProperActivity(event.className, event.packageName))
             return
 
+        // Set appInfo ONLY if the current app has custom actions
         appInfo = ApkInfoFactory.AppInfoHashMap[event.packageName]
+        appInfo?.let {
+            if (it.numberOfCustomActions < 1)
+                appInfo = null
+        }
     }
 
     override fun onDestroy() = super.onDestroy().also {
@@ -80,7 +95,6 @@ class FingerprintService : AccessibilityService() {
         // Set static variable to this running service
         self = this
 
-        //todo check to see if service is now available, or just running
         val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
             .getString(CONFIG, Gson().toJson(Configuration(null)))
         val config = Gson().fromJson(configJSON, Configuration::class.java)
@@ -99,7 +113,7 @@ class FingerprintService : AccessibilityService() {
         leftSideOfScreen = displayMetrics.widthPixels / 4
         middleXValue = displayMetrics.widthPixels / 2
         gestureController = fingerprintGestureController
-        gestureDetectionAvailable = gestureController != null && gestureController!!.isGestureDetectionAvailable
+        gestureDetectionAvailable = gestureController?.isGestureDetectionAvailable ?: false
 
         if (fingerprintCallback != null || !gestureDetectionAvailable)
             return
@@ -116,65 +130,101 @@ class FingerprintService : AccessibilityService() {
         val config = getConfig()
 
         // Do nothing if service is not enabled
-        if (!config.bServiceEnabled)
+        if (!config.bServiceEnabled || !config.bUserEnabledService)
             return
 
-        // Determine what action to do based on swipe and if Recent Apps page is currently shown
-        when (swipeDirection) {
-            FINGERPRINT_GESTURE_SWIPE_DOWN -> {
-                if (config.bRecentActionsEnabled && recentsShown)
-                    performRecentsAction(config.recentSwipeDownAction, swipeDirection)
-                else
-                    performAction(config.swipeDownAction)
-            }
-            FINGERPRINT_GESTURE_SWIPE_UP -> {
-                if (config.bRecentActionsEnabled && recentsShown)
-                    performRecentsAction(config.recentSwipeUpAction, swipeDirection)
-                else
-                    performAction(config.swipeUpAction)
-            }
-            FINGERPRINT_GESTURE_SWIPE_LEFT -> {
-                if (config.bRecentActionsEnabled && recentsShown)
-                    performRecentsAction(config.recentSwipeLeftAction, swipeDirection)
-                else
-                    performAction(config.swipeLeftAction)
-            }
-            FINGERPRINT_GESTURE_SWIPE_RIGHT -> {
-                if (config.bRecentActionsEnabled && recentsShown)
-                    performRecentsAction(config.recentSwipeRightAction, swipeDirection)
-                else
-                    performAction(config.swipeRightAction)
-            }
+
+        // Perform proper action based on state of device and user-defined custom app actions
+        when (val action = when {
+            config.bRecentActionsEnabled && recentsShown -> ActionType.RecentsAction
+            appInfo != null -> ActionType.CustomAppAction
+            else -> ActionType.NormalAction
+        }) {
+            ActionType.RecentsAction -> performRecentsAction(swipeDirection, config)
+            ActionType.CustomAppAction -> performCustomAppAction(swipeDirection, config)
+            ActionType.NormalAction -> performAction(swipeDirection, config)
+            else -> Log.e(TAG, "Unknown action with actionId $action")
         }
     }
 
-    private fun performRecentsAction (action: Int, swipeDirection: Int)
-    {
-        when (action) {
+    /**
+     * Performs a custom app action based on the swipe direction.
+     */
+    private fun performCustomAppAction(swipeDirection: Int, config: Configuration) {
+        when (val action = when (swipeDirection) {
+            FINGERPRINT_GESTURE_SWIPE_UP -> appInfo!!.swipeUpAction
+            FINGERPRINT_GESTURE_SWIPE_DOWN -> appInfo!!.swipeDownAction
+            FINGERPRINT_GESTURE_SWIPE_LEFT -> appInfo!!.swipeLeftAction
+            FINGERPRINT_GESTURE_SWIPE_RIGHT -> appInfo!!.swipeRightAction
+            else -> {
+                Log.e(TAG, "Unknown swipe direction ($swipeDirection)")
+                config.swipeDownAction
+            }
+        }) {
+            APP_ACTION_NONE -> return
+            APP_ACTION_BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
+            APP_ACTION_HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
+            APP_ACTION_RECENTS -> performGlobalAction(GLOBAL_ACTION_RECENTS)
+            APP_ACTION_NOTIFICATIONS -> performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+            APP_ACTION_POWER_MENU -> performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
+            APP_ACTION_QUICK_SETTINGS -> performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+            APP_ACTION_SCROLL_LEFT -> actionScrollLeft()
+            APP_ACTION_SCROLL_RIGHT -> actionScrollRight()
+            APP_ACTION_SCROLL_UP -> actionScrollUp()
+            APP_ACTION_SCROLL_DOWN -> actionScrollDown()
+            APP_ACTION_DEFAULT -> performAction(swipeDirection, config)
+            else -> Log.e(TAG, "Unknown normal action with actionId $action")
+        }
+    }
+
+    /**
+     * Performs a custom action when the recents view is shown.
+     */
+    private fun performRecentsAction(swipeDirection: Int, config: Configuration) {
+
+        when (val action = when (swipeDirection) {
+            FINGERPRINT_GESTURE_SWIPE_UP -> config.recentSwipeUpAction
+            FINGERPRINT_GESTURE_SWIPE_DOWN -> config.recentSwipeDownAction
+            FINGERPRINT_GESTURE_SWIPE_LEFT -> config.recentSwipeLeftAction
+            FINGERPRINT_GESTURE_SWIPE_RIGHT -> config.recentSwipeRightAction
+            else -> {
+                Log.e(TAG, "Unknown swipe direction ($swipeDirection)")
+                config.recentSwipeDownAction
+            }
+        }) {
             RECENTS_ACTION_NONE -> return
-            RECENTS_ACTION_BACK -> performAction(ACTION_BACK)
-            RECENTS_ACTION_HOME -> performAction(ACTION_HOME)
-            RECENTS_ACTION_RECENTS -> performAction(ACTION_RECENTS)
-            RECENTS_ACTION_NOTIFICATIONS -> performAction(ACTION_NOTIFICATIONS)
-            RECENTS_ACTION_POWER_MENU -> performAction(ACTION_POWER_MENU)
-            RECENTS_ACTION_QUICK_SETTINGS -> performAction(ACTION_QUICK_SETTINGS)
-            RECENTS_ACTION_SCROLL_LEFT -> performAction(ACTION_SCROLL_LEFT)
-            RECENTS_ACTION_SCROLL_RIGHT -> performAction(ACTION_SCROLL_RIGHT)
-            RECENTS_ACTION_SCROLL_UP -> performAction(ACTION_SCROLL_UP)
-            RECENTS_ACTION_SCROLL_DOWN -> performAction(ACTION_SCROLL_DOWN)
+            RECENTS_ACTION_BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
+            RECENTS_ACTION_HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
+            RECENTS_ACTION_PREVIOUS_APP -> performGlobalAction(GLOBAL_ACTION_RECENTS)
+            RECENTS_ACTION_NOTIFICATIONS -> performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+            RECENTS_ACTION_POWER_MENU -> performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
+            RECENTS_ACTION_QUICK_SETTINGS -> performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+            RECENTS_ACTION_SCROLL_LEFT -> actionScrollLeft()
+            RECENTS_ACTION_SCROLL_RIGHT -> actionScrollRight()
+            RECENTS_ACTION_SCROLL_UP -> actionScrollUp()
+            RECENTS_ACTION_SCROLL_DOWN -> actionScrollDown()
             RECENTS_ACTION_SELECT_APP -> actionTapCenter()
-            RECENTS_ACTION_DEFAULT -> when(swipeDirection) {
-                FINGERPRINT_GESTURE_SWIPE_DOWN -> performAction(getConfig().swipeDownAction)
-                FINGERPRINT_GESTURE_SWIPE_UP -> performAction(getConfig().swipeUpAction)
-                FINGERPRINT_GESTURE_SWIPE_RIGHT -> performAction(getConfig().swipeRightAction)
-                FINGERPRINT_GESTURE_SWIPE_LEFT -> performAction(getConfig().swipeLeftAction)
-            }
-            else -> Log.e("FingerprintService", "Unknown recents action with actionId $action")
+            RECENTS_ACTION_DEFAULT -> performAction(swipeDirection, config)
+            else -> Log.e(TAG, "Unknown recents action with actionId $action")
         }
     }
 
-    private fun performAction(action: Int) {
-        when (action) {
+    /**
+     * Performs a normal action whenever recents isn't shown and current app has no custom action for
+     * the given swipe direction.
+     */
+    private fun performAction(swipeDirection: Int, config: Configuration) {
+        when (val action = when (swipeDirection) {
+            FINGERPRINT_GESTURE_SWIPE_UP -> config.swipeUpAction
+            FINGERPRINT_GESTURE_SWIPE_DOWN -> config.swipeDownAction
+            FINGERPRINT_GESTURE_SWIPE_LEFT -> config.swipeLeftAction
+            FINGERPRINT_GESTURE_SWIPE_RIGHT -> config.swipeRightAction
+            else -> {
+                Log.e(TAG, "Unknown swipe direction ($swipeDirection)")
+                config.swipeDownAction
+            }
+        }) {
+            ACTION_NONE -> return
             ACTION_BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
             ACTION_HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
             ACTION_RECENTS -> performGlobalAction(GLOBAL_ACTION_RECENTS)
@@ -185,7 +235,7 @@ class FingerprintService : AccessibilityService() {
             ACTION_SCROLL_RIGHT -> actionScrollRight()
             ACTION_SCROLL_UP -> actionScrollUp()
             ACTION_SCROLL_DOWN -> actionScrollDown()
-            else -> Log.e("FingerprintService", "Unknown action with actionId $action")
+            else -> Log.e(TAG, "Unknown normal action with actionId $action")
         }
     }
 
@@ -256,12 +306,14 @@ class FingerprintService : AccessibilityService() {
     /**
      * Ensures <p>className</p> is viable for comparision against app package names.
      *
-     * @param className name of class that triggered <c> AccessibilityEvent </c>
+     * @param className name of class that triggered <c>AccessibilityEvent</c>
+     * @param packageName name of package that triggered <c>AccessibilityEvent</c>. This is checked against
+     * the list of known apps in ApkFactory.ApkInfoHashMap
      *
      * @return <t>true</t> if className is potentially an app package name, <t>false</t> otherwise
      */
-    private fun bIsProperActivity(className: CharSequence?): Boolean =
-        className != null && className != "" && !className.startsWith("android.")
+    private fun bIsProperActivity(className: CharSequence?, packageName: CharSequence): Boolean =
+        className != null && className != "" && !className.startsWith("android.") && ApkInfoFactory.AppInfoHashMap.contains(packageName)
 
 
     /**
@@ -288,9 +340,12 @@ class FingerprintService : AccessibilityService() {
     }
 
     companion object {
+        val TAG = "FingerprintService"
         private var self: FingerprintService? = null
         fun getServiceObject(): FingerprintService? {
             return self
         }
     }
+
+    enum class ActionType {RecentsAction, NormalAction, CustomAppAction}
 }

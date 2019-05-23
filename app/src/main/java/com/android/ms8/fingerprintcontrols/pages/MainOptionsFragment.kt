@@ -31,7 +31,7 @@ class MainOptionsFragment : Fragment() {
             }.root
 
     private fun resetToDefaults() {
-        TODO("Not yet implemented")
+        listener?.getConfiguration()?.reset()
     }
 
     /**
@@ -44,7 +44,6 @@ class MainOptionsFragment : Fragment() {
                 activity?.requestPermissions(arrayOf(getFingerprintPermission()), MainActivity.REQ_FINGERPRINT)
             FingerprintService.getServiceObject() != null ->
                 activity?.stopService(Intent(context, FingerprintService::class.java))
-            else -> Log.w("test###", "Call to toggleService(false) while no FingerprintService is running!")
         }
     }
 

@@ -24,12 +24,6 @@ class AppInfoAdapter : RecyclerView.Adapter<AppInfoAdapter.AppInfoHolder>() {
 
     override fun onBindViewHolder(holder: AppInfoHolder, pos: Int) {
         holder.bind(apps[pos])
-        holder.binding.root.setOnClickListener { onAppClicked(apps[holder.adapterPosition]) }
-    }
-
-    private fun onAppClicked(appInfo: AppInfo) {
-
-        //todo start activity showing action options for selected application
     }
 
     fun add(app : AppInfo) = apps.add(app).also { notifyItemInserted(apps.size-1) }

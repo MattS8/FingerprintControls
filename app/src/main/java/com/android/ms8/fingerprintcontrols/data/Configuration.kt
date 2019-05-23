@@ -9,29 +9,33 @@ class Configuration(observable: ConfigurationObservable?) {
     var swipeLeftAction = ACTION_BACK
     var swipeRightAction = ACTION_NONE
 
-    var recentSwipeUpAction = ACTION_RECENTS
-    var recentSwipeDownAction = ACTION_HOME
-    var recentSwipeLeftAction = ACTION_SCROLL_LEFT
-    var recentSwipeRightAction = ACTION_SCROLL_RIGHT
+    var recentSwipeUpAction = RECENTS_ACTION_PREVIOUS_APP
+    var recentSwipeDownAction = RECENTS_ACTION_SELECT_APP
+    var recentSwipeLeftAction = RECENTS_ACTION_SCROLL_LEFT
+    var recentSwipeRightAction = RECENTS_ACTION_SCROLL_RIGHT
 
     var currentPage = R.id.navigation_main_options
 
     var bServiceEnabled = false
     var bRecentActionsEnabled = true
 
+    var bUserEnabledService = false
+    set(value) { field = value && bServiceEnabled }
+
     init {
-        swipeUpAction = observable?.swipeUpAction?.get() ?: ACTION_NONE
+        swipeUpAction = observable?.swipeUpAction?.get() ?: ACTION_RECENTS
         swipeDownAction = observable?.swipeDownAction?.get() ?: ACTION_HOME
         swipeLeftAction = observable?.swipeLeftAction?.get() ?: ACTION_BACK
-        swipeRightAction = observable?.swipeRightAction?.get() ?: ACTION_RECENTS
+        swipeRightAction = observable?.swipeRightAction?.get() ?: ACTION_NONE
 
-        recentSwipeUpAction = observable?.recentSwipeUpAction?.get() ?: RECENTS_ACTION_RECENTS
+        recentSwipeUpAction = observable?.recentSwipeUpAction?.get() ?: RECENTS_ACTION_PREVIOUS_APP
         recentSwipeDownAction = observable?.recentSwipeDownAction?.get() ?: RECENTS_ACTION_SELECT_APP
-        recentSwipeLeftAction = observable?.recentSwipeLeftAction?.get() ?: ACTION_SCROLL_LEFT
-        recentSwipeRightAction = observable?.recentSwipeRightAction?.get() ?: ACTION_SCROLL_RIGHT
+        recentSwipeLeftAction = observable?.recentSwipeLeftAction?.get() ?: RECENTS_ACTION_SCROLL_LEFT
+        recentSwipeRightAction = observable?.recentSwipeRightAction?.get() ?: RECENTS_ACTION_SCROLL_RIGHT
 
         currentPage = observable?.currentPage?.get() ?: R.id.navigation_main_options
         bServiceEnabled = observable?.bServiceEnabled?.get() ?: false
+        bUserEnabledService = observable?.bUserEnabledService?.get() ?: false
         bRecentActionsEnabled = observable?.bRecentActionsEnabled?.get() ?: true
     }
 
@@ -54,7 +58,7 @@ class Configuration(observable: ConfigurationObservable?) {
         const val RECENTS_ACTION_SCROLL_LEFT = 1
         const val RECENTS_ACTION_SCROLL_RIGHT = 2
         const val RECENTS_ACTION_SELECT_APP = 3
-        const val RECENTS_ACTION_RECENTS = 4
+        const val RECENTS_ACTION_PREVIOUS_APP = 4
         const val RECENTS_ACTION_BACK = 5
         const val RECENTS_ACTION_HOME = 6
         const val RECENTS_ACTION_SCROLL_UP = 7

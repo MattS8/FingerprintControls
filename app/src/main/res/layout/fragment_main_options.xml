@@ -22,7 +22,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:focusable="true"
                     android:clickable="true"
-                    android:checked="@={config.bServiceEnabled}"
+                    android:checked="@={config.BUserEnabledService}"
                     android:layout_marginEnd="@dimen/list_margin_start"
                     android:layout_marginStart="@dimen/list_margin_start"
                     android:layout_marginTop="@dimen/spinner_vertical_margin"

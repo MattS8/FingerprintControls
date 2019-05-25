@@ -30,9 +30,10 @@ class HelpFragment : Fragment() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    private fun sendSuggestionClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    private fun sendSuggestionClicked() =
+        activity?.supportFragmentManager?.let {
+            SuggestionFragment().show(it, "suggestion_fragment")
+        }
 
     companion object {
         @JvmStatic

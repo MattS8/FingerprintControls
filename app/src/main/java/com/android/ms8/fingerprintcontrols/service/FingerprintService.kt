@@ -39,13 +39,13 @@ import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTI
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.APP_ACTION_SCROLL_UP
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_BACK
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_DEFAULT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_HOME
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_NONE
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_NOTIFICATIONS
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_POWER_MENU
-import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_QUICK_SETTINGS
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_PREVIOUS_APP
-import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_DEFAULT
+import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_QUICK_SETTINGS
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_DOWN
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_LEFT
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.RECENTS_ACTION_SCROLL_RIGHT
@@ -98,7 +98,7 @@ class FingerprintService : AccessibilityService() {
         val configJSON = PreferenceManager.getDefaultSharedPreferences(this)
             .getString(CONFIG, Gson().toJson(Configuration(null)))
         val config = Gson().fromJson(configJSON, Configuration::class.java)
-            .apply { this.bServiceEnabled = true }
+            .apply { this.bServiceEnabled.set(true) }
 
         PreferenceManager.getDefaultSharedPreferences(this).edit().remove(CONFIG)
             .putString(CONFIG, Gson().toJson(config))
@@ -130,13 +130,13 @@ class FingerprintService : AccessibilityService() {
         val config = getConfig()
 
         // Do nothing if service is not enabled
-        if (!config.bServiceEnabled || !config.bUserEnabledService)
+        if (!config.bServiceEnabled.get() || !config.bUserEnabledService.get())
             return
 
 
         // Perform proper action based on state of device and user-defined custom app actions
         when (val action = when {
-            config.bRecentActionsEnabled && recentsShown -> ActionType.RecentsAction
+            config.bRecentActionsEnabled.get() && recentsShown -> ActionType.RecentsAction
             appInfo != null -> ActionType.CustomAppAction
             else -> ActionType.NormalAction
         }) {
@@ -183,13 +183,13 @@ class FingerprintService : AccessibilityService() {
     private fun performRecentsAction(swipeDirection: Int, config: Configuration) {
 
         when (val action = when (swipeDirection) {
-            FINGERPRINT_GESTURE_SWIPE_UP -> config.recentSwipeUpAction
-            FINGERPRINT_GESTURE_SWIPE_DOWN -> config.recentSwipeDownAction
-            FINGERPRINT_GESTURE_SWIPE_LEFT -> config.recentSwipeLeftAction
-            FINGERPRINT_GESTURE_SWIPE_RIGHT -> config.recentSwipeRightAction
+            FINGERPRINT_GESTURE_SWIPE_UP -> config.recentSwipeUpAction.get()
+            FINGERPRINT_GESTURE_SWIPE_DOWN -> config.recentSwipeDownAction.get()
+            FINGERPRINT_GESTURE_SWIPE_LEFT -> config.recentSwipeLeftAction.get()
+            FINGERPRINT_GESTURE_SWIPE_RIGHT -> config.recentSwipeRightAction.get()
             else -> {
                 Log.e(TAG, "Unknown swipe direction ($swipeDirection)")
-                config.recentSwipeDownAction
+                config.recentSwipeDownAction.get()
             }
         }) {
             RECENTS_ACTION_NONE -> return
@@ -215,13 +215,13 @@ class FingerprintService : AccessibilityService() {
      */
     private fun performAction(swipeDirection: Int, config: Configuration) {
         when (val action = when (swipeDirection) {
-            FINGERPRINT_GESTURE_SWIPE_UP -> config.swipeUpAction
-            FINGERPRINT_GESTURE_SWIPE_DOWN -> config.swipeDownAction
-            FINGERPRINT_GESTURE_SWIPE_LEFT -> config.swipeLeftAction
-            FINGERPRINT_GESTURE_SWIPE_RIGHT -> config.swipeRightAction
+            FINGERPRINT_GESTURE_SWIPE_UP -> config.swipeUpAction.get()
+            FINGERPRINT_GESTURE_SWIPE_DOWN -> config.swipeDownAction.get()
+            FINGERPRINT_GESTURE_SWIPE_LEFT -> config.swipeLeftAction.get()
+            FINGERPRINT_GESTURE_SWIPE_RIGHT -> config.swipeRightAction.get()
             else -> {
                 Log.e(TAG, "Unknown swipe direction ($swipeDirection)")
-                config.swipeDownAction
+                config.swipeDownAction.get()
             }
         }) {
             ACTION_NONE -> return

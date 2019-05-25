@@ -59,24 +59,8 @@ class MainOptionsFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener?.updateConfig()
-        listener?.unbindToolbar()
+        listener?.unbindToolbarScrollView()
         listener = null
-    }
-
-    /**
-     * Updates the configuration file to the value specified and attempts to start the service if the id is
-     * R.id.serviceEnabled.
-     *
-     * This function is called whenever a user taps on a switch.
-     */
-    private fun onCheckChanged(id: Int, bChecked: Boolean) {
-        // Check the id and either enable/disable recent app actions or attempt to start/stop the service
-        when (id) {
-            R.id.serviceEnabled -> activity?.requestPermissions(arrayOf(getFingerprintPermission()),
-                MainActivity.REQ_FINGERPRINT
-            )
-            else -> binding.config?.bRecentActionsEnabled?.set(false)
-        }
     }
 
     /* ------------------------------------------ Simple helper functions ------------------------------------------ */

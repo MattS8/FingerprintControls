@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
@@ -17,7 +18,6 @@ import android.util.Log
 import android.widget.ScrollView
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
-import com.android.ms8.fingerprintcontrols.data.ConfigurationObservable
 import com.android.ms8.fingerprintcontrols.databinding.MainActivityBinding
 import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
 import com.android.ms8.fingerprintcontrols.listeners.ObservableListener
@@ -32,18 +32,28 @@ import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     lateinit var binding : MainActivityBinding
-    lateinit var config: ConfigurationObservable
+    lateinit var config: Configuration
+    val fragments : HashMap<Int, Fragment> = HashMap()
     /**
      * Listener for bottom nav bar that loads the proper fragment.
      */
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        // Set current selected page
-        binding.configuration?.currentPage?.set(item.itemId)
+        when (item.itemId) {
+            binding.navigation.selectedItemId -> {}
+            else -> {
+                // Set current selected page
+                binding.configuration?.currentPage?.set(item.itemId)
 
-        // Set title based on selected page
-        toolbar.title = getPageTitle(item.itemId)
-        // Load fragment and return success/failure
-        loadFragment(item.itemId)
+                // Load fragment and return success/failure
+                loadFragment(item.itemId)
+
+                // Show/Hide toolbar and set title based on page selected (hide for help page)
+                when (item.itemId == R.id.navigation_about) {
+                    true -> toolbar.hideToolbar().also { toolbar.title = "" } // Hiding title for help page
+                    false -> toolbar.showToolbar().also { toolbar.title = getPageTitle(item.itemId) }
+                }
+            }
+        }
 
         return@OnNavigationItemSelectedListener true
     }
@@ -60,7 +70,7 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                     // Permission was denied
                     grantResults[0] != PackageManager.PERMISSION_GRANTED -> {
                         // Update configuration file
-                        binding.configuration?.bServiceEnabled?.set(false)
+                        config.bServiceEnabled.set(false)
                         updateConfig()
                         // Show notification to user
                         Snackbar.make(this.container, R.string.err_perm_denied, Snackbar.LENGTH_LONG).show()
@@ -69,7 +79,8 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                     // Permission was accepted and fingerprint hardware was found
                     FingerprintManagerCompat.from(this).isHardwareDetected -> {
                         // Update configuration file
-                        binding.configuration?.bServiceEnabled?.set(true)
+                        config.bServiceEnabled.set(true)
+                        config.bUserEnabledService.set(true)
                         updateConfig()
 
                         // Start service if no service is running
@@ -82,7 +93,7 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                     // Permission was accepted but no fingerprint hardware was found
                     else -> {
                         // Update configuration file
-                        binding.configuration?.bServiceEnabled?.set(false)
+                        config.bServiceEnabled.set(false)
                         updateConfig()
                         // Show notification to user
                         Snackbar.make(this.container, R.string.err_enabling, Snackbar.LENGTH_INDEFINITE)
@@ -107,18 +118,20 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         binding = DataBindingUtil.setContentView(this, R.layout.main_activity)
         binding.lifecycleOwner = this
 
+        // Get fragments
+        fragments[R.id.navigation_main_options] = MainOptionsFragment.newInstance()
+        fragments[R.id.navigation_app_actions] = AppActionsFragment.newInstance()
+        fragments[R.id.navigation_about] = HelpFragment.newInstance()
+
         // Start background task to fetch AppInfo
         ApkInfoFactory.getApps(null, WeakReference(this))
 
         // Get saved/default configuration file
-        config = ConfigurationObservable(
-            Gson()
-                .fromJson(
-                    PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString(CONFIG, Gson().toJson(Configuration(null))),
-                    Configuration::class.java
-                )
-        )
+        val configPrefStr = PreferenceManager.getDefaultSharedPreferences(this)
+            .getString(CONFIG, Gson().toJson(Configuration(null)))
+        config = Gson().fromJson(configPrefStr, Configuration::class.java)
+
+        // Link binding
         binding.configuration = config
 
         // Set bottom nav bar listener
@@ -180,6 +193,26 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     /** Takes care of all logic concerning switching the shown page in the container**/
     private fun loadFragment(itemId: Int) {
         // Find fragment for intended page
+        val fragment : Fragment = fragments[itemId] ?: MainOptionsFragment.newInstance()
+            .also { Log.e(TAG, "Expected to find a fragment with id $itemId")}
+
+        // Start page swap transaction
+        val fragTransaction = supportFragmentManager.beginTransaction()
+
+        // Add transition animations
+        fragTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.no_anim)
+
+        // Replace current fragment with new one
+        fragTransaction.replace(R.id.frag_container, fragment, getPageTitle(itemId) as String)
+
+        // Animate fragment entering
+        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+
+        fragTransaction.commit()
+
+        // OLD loadFragment()
+/*
+        // Find fragment for intended page
         var fragment : Fragment? = supportFragmentManager.findFragmentByTag(getPageTitle(itemId) as String)
 
         // Start page swap transaction
@@ -191,11 +224,11 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
 
         // Get a new fragment (based on item selected) if frag manager doesn't have one
         if (fragment == null) {
-            when (itemId) {
-                R.id.navigation_main_options -> { fragment = MainOptionsFragment.newInstance() }
-                R.id.navigation_app_actions -> { fragment = AppActionsFragment.newInstance() }
-                R.id.navigation_about -> { fragment = HelpFragment.newInstance() }
-                else -> fragment = MainOptionsFragment.newInstance()
+            fragment = when (itemId) {
+                R.id.navigation_main_options -> MainOptionsFragment.newInstance()
+                R.id.navigation_app_actions -> AppActionsFragment.newInstance()
+                R.id.navigation_about -> HelpFragment.newInstance()
+                else -> MainOptionsFragment.newInstance()
             }
             fragTransaction.add(R.id.frag_container, fragment, getPageTitle(itemId) as String)
         }
@@ -204,7 +237,14 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
 
         fragTransaction.setPrimaryNavigationFragment(fragment)
         fragTransaction.setReorderingAllowed(true)
+
+        // Add transition animations
+        fragTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_bottom)
+        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+
+
         fragTransaction.commitNowAllowingStateLoss()
+*/
     }
 
     /** Returns the title of the page corresponding to the page int resource **/
@@ -227,31 +267,36 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
     override fun updateConfig() {
         PreferenceManager.getDefaultSharedPreferences(this).edit()
             .remove(CONFIG)
-            .putString(CONFIG, Gson().toJson(Configuration(binding.configuration)))
+            .putString(CONFIG, Gson().toJson(binding.configuration, Configuration::class.java))
             .apply()
     }
 
     /** A simple getter for the current copy of the configuration file **/
-    override fun getConfiguration(): ConfigurationObservable? {
+    override fun getConfiguration(): Configuration? {
         return config
     }
 
     override fun bindToolbar(recyclerView: RecyclerView) {
-        unbindToolbar()
+        // Don't want both ScrollView and RecyclerView bound at the same time!
+        unbindToolbarScrollView()
+
         toolbar.recyclerView = recyclerView
     }
 
     override fun bindToolbar(scrollView: ScrollView) {
-        unbindToolbar()
+        // Don't want both ScrollView and RecyclerView bound at the same time!
+        unbindToolbarRecyclerView()
+
         toolbar.scrollView = scrollView
     }
 
-    override fun unbindToolbar() {
-        toolbar.recyclerView = null
-        toolbar.scrollView = null
-    }
+    override fun unbindToolbarRecyclerView() { toolbar.recyclerView = null }
+
+    override fun unbindToolbarScrollView() { toolbar.scrollView = null }
 
     companion object {
+        const val TAG = "MainActivity"
+
         const val REQ_FINGERPRINT = 88
         const val RES_ACCESSIBILITY = 5
     }

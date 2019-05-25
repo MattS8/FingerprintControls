@@ -1,42 +1,52 @@
 package com.android.ms8.fingerprintcontrols.data
 
+import android.arch.lifecycle.ViewModel
+import android.databinding.*
 import com.android.ms8.fingerprintcontrols.R
 
-class Configuration(observable: ConfigurationObservable?) {
+class Configuration(config: Configuration? = null) : ViewModel() {
+    var swipeUpAction = ObservableInt().apply { this.set(ACTION_RECENTS) }
+    var swipeDownAction = ObservableInt().apply { this.set(ACTION_HOME) }
+    var swipeLeftAction = ObservableInt().apply { this.set(ACTION_BACK) }
+    var swipeRightAction = ObservableInt().apply { this.set(ACTION_NONE)}
 
-    var swipeUpAction = ACTION_RECENTS
-    var swipeDownAction = ACTION_HOME
-    var swipeLeftAction = ACTION_BACK
-    var swipeRightAction = ACTION_NONE
+    var recentSwipeUpAction = ObservableInt().apply { this.set(RECENTS_ACTION_PREVIOUS_APP) }
+    var recentSwipeDownAction = ObservableInt().apply { this.set(RECENTS_ACTION_SELECT_APP) }
+    var recentSwipeLeftAction = ObservableInt().apply { this.set(RECENTS_ACTION_SCROLL_LEFT)}
+    var recentSwipeRightAction = ObservableInt().apply { this.set(RECENTS_ACTION_SCROLL_RIGHT) }
 
-    var recentSwipeUpAction = RECENTS_ACTION_PREVIOUS_APP
-    var recentSwipeDownAction = RECENTS_ACTION_SELECT_APP
-    var recentSwipeLeftAction = RECENTS_ACTION_SCROLL_LEFT
-    var recentSwipeRightAction = RECENTS_ACTION_SCROLL_RIGHT
+    var currentPage = ObservableInt().apply { this.set(R.id.navigation_main_options) }
 
-    var currentPage = R.id.navigation_main_options
-
-    var bServiceEnabled = false
-    var bRecentActionsEnabled = true
-
-    var bUserEnabledService = false
-    set(value) { field = value && bServiceEnabled }
+    var bServiceEnabled = ObservableBoolean().apply { this.set(false) }
+    var bUserEnabledService = ObservableBoolean().apply { this.set(false) }
+    var bRecentActionsEnabled = ObservableBoolean().apply { this.set(true) }
 
     init {
-        swipeUpAction = observable?.swipeUpAction?.get() ?: ACTION_RECENTS
-        swipeDownAction = observable?.swipeDownAction?.get() ?: ACTION_HOME
-        swipeLeftAction = observable?.swipeLeftAction?.get() ?: ACTION_BACK
-        swipeRightAction = observable?.swipeRightAction?.get() ?: ACTION_NONE
+        config?.let {
+            setup(it)
+        }
+    }
 
-        recentSwipeUpAction = observable?.recentSwipeUpAction?.get() ?: RECENTS_ACTION_PREVIOUS_APP
-        recentSwipeDownAction = observable?.recentSwipeDownAction?.get() ?: RECENTS_ACTION_SELECT_APP
-        recentSwipeLeftAction = observable?.recentSwipeLeftAction?.get() ?: RECENTS_ACTION_SCROLL_LEFT
-        recentSwipeRightAction = observable?.recentSwipeRightAction?.get() ?: RECENTS_ACTION_SCROLL_RIGHT
+    private fun setup(config: Configuration) {
+        swipeUpAction.set(config.swipeUpAction.get())
+        swipeDownAction.set(config.swipeDownAction.get())
+        swipeLeftAction.set(config.swipeLeftAction.get())
+        swipeRightAction.set(config.swipeRightAction.get())
 
-        currentPage = observable?.currentPage?.get() ?: R.id.navigation_main_options
-        bServiceEnabled = observable?.bServiceEnabled?.get() ?: false
-        bUserEnabledService = observable?.bUserEnabledService?.get() ?: false
-        bRecentActionsEnabled = observable?.bRecentActionsEnabled?.get() ?: true
+        recentSwipeUpAction.set(config.recentSwipeUpAction.get())
+        recentSwipeDownAction.set(config.recentSwipeDownAction.get())
+        recentSwipeLeftAction.set(config.recentSwipeLeftAction.get())
+        recentSwipeRightAction.set(config.recentSwipeRightAction.get())
+
+        currentPage.set(config.currentPage.get())
+
+        bServiceEnabled.set(config.bServiceEnabled.get())
+        bUserEnabledService.set(config.bUserEnabledService.get())
+        bRecentActionsEnabled.set(config.bRecentActionsEnabled.get())
+    }
+
+    fun reset() {
+        setup(Configuration())
     }
 
     companion object {

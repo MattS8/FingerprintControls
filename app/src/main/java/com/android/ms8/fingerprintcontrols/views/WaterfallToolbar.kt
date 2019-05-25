@@ -1,5 +1,6 @@
 package com.android.ms8.fingerprintcontrols.views
 
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
@@ -10,11 +11,14 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.ScrollView
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.util.Dp
 import com.android.ms8.fingerprintcontrols.util.Px
 import com.android.ms8.fingerprintcontrols.util.density
+
 
 /**
  * Created by Hugo Castelani
@@ -72,7 +76,6 @@ class WaterfallToolbar : android.support.v7.widget.Toolbar {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             // real position must always get updated
-
             realPosition.value = realPosition.value + dy
             mutualScrollListenerAction()
         }
@@ -273,6 +276,31 @@ class WaterfallToolbar : android.support.v7.widget.Toolbar {
 
     private fun removeScrollViewScrollListener() {
         viewTreeObserver?.removeOnScrollChangedListener(scrollViewListener)
+    }
+
+    fun showToolbar() {
+        visibility = View.VISIBLE
+        ValueAnimator.ofFloat(alpha, 1.0f)
+            .apply {
+                duration = 300
+                interpolator = AccelerateDecelerateInterpolator()
+                addUpdateListener { alpha = animatedValue as Float }
+            }
+            .start()
+    }
+
+    fun hideToolbar() {
+        ValueAnimator.ofFloat(alpha, 0.0f)
+            .apply {
+                duration = 300
+                interpolator = AccelerateDecelerateInterpolator()
+                addUpdateListener {
+                    alpha = animatedValue as Float
+                    if (alpha == 0.0f)
+                        visibility = View.GONE
+                }
+            }
+            .start()
     }
 
     /**

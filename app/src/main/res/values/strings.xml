@@ -31,6 +31,20 @@
     <string name="title_custom_actions">&#160;Custom Actions</string>
     <string name="custom_action">custom action</string>
     <string name="save_changes">Save Changes</string>
+    <string name="how_do_i_use_this_app">About This App</string>
+    <string name="desc_logo">logo</string>
+    <string name="view_tutorial">View Tutorial</string>
+    <string name="about_desc">This app unlocks the potential of your fingerprint reader, allowing you to perform specific
+        actions based on swipe gestures. You can also set custom actions on an app-by-app basis and for the “Recent Apps” menu.
+    </string>
+    <string name="suggestions">Suggestions?</string>
+    <string name="send_suggestion">Send Suggestion</string>
+    <string name="found_a_bug">Found a bug?</string>
+    <string name="report_bug">Report Bug</string>
+    <string name="suggestion_type">Suggestion Type</string>
+    <string name="describe_your_suggestion">Describe Your Suggestion:</string>
+    <string name="desc">Description</string>
+    <string name="send">send</string>
 
     <string-array name="gesture_actions">
         <item>None</item>
@@ -76,4 +90,18 @@
         <item>Scroll Down</item>
         <item>Default Action</item>
     </string-array>
+
+    <string-array name="suggestion_types">
+        <item>Feature Request</item>
+        <item>Usability Improvement</item>
+        <item>Language Translation</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="bug_severity">
+        <item>Critical (App crashes)</item>
+        <item>Major (App malfunctions/ Unusable)</item>
+        <item>Moderate/Low (Graphic glitches or minor hiccups)</item>
+    </string-array>
+
 </resources>

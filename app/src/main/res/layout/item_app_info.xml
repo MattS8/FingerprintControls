@@ -9,24 +9,26 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
-                  android:clickable="true" android:layout_marginBottom="8dp"
-                  android:weightSum="1">
+                  android:background="?selectableItemBackground"
+                  android:clickable="true"
+                  android:layout_marginBottom="8dp"
+                  android:weightSum="1"
+                  android:onClick="@{(v) -> viewModel.onAppClicked(v)}">
 
         <ImageView
                 android:layout_width="@dimen/app_icon_size"
-                android:layout_height="@dimen/app_icon_size" tools:srcCompat="@mipmap/ic_fp2"
-                android:id="@+id/imgAppIcon" android:layout_marginStart="@dimen/list_margin_start"
+                android:layout_height="@dimen/app_icon_size"
+                android:id="@+id/imgAppIcon"
+                android:layout_marginStart="@dimen/list_margin_start"
                 android:contentDescription="@string/application_icon"
-                app:iconUri="@{viewModel.iconUri}"
+                app:iconUri="@{viewModel.iconUri}" tools:srcCompat="@mipmap/ic_fp2"
                 android:layout_marginTop="8dp"
-                android:layout_weight=".05"
-                android:onClick="@{(v) -> viewModel.onAppClicked(v)}"/>
+                android:layout_weight=".05"/>
 
         <LinearLayout android:layout_width="0dp"
                       android:layout_height="wrap_content"
                       android:orientation="vertical"
-                      android:layout_weight=".8"
-                      android:onClick="@{(v) -> viewModel.onAppClicked(v)}">
+                      android:layout_weight=".8">
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

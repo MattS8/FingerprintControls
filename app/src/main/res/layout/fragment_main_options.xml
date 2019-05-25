@@ -2,14 +2,16 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="config" type="com.android.ms8.fingerprintcontrols.data.ConfigurationObservable"/>
+        <variable name="config" type="com.android.ms8.fingerprintcontrols.data.Configuration"/>
     </data>
     <ScrollView
             android:layout_width="match_parent" android:layout_height="match_parent"
             tools:context=".pages.MainOptionsFragment"
             android:requiresFadingEdge="vertical"
             android:fadingEdgeLength="12dp"
-            android:id="@+id/scrollview_main_options">
+            android:id="@+id/scrollview_main_options"
+            android:background="@color/backgroundWhite"
+            android:layout_marginTop="?actionBarSize">
         <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

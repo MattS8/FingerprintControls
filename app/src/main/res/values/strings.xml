@@ -34,8 +34,8 @@
     <string name="how_do_i_use_this_app">About This App</string>
     <string name="desc_logo">logo</string>
     <string name="view_tutorial">View Tutorial</string>
-    <string name="about_desc">This app unlocks the potential of your fingerprint reader, allowing you to perform specific
-        actions based on swipe gestures. You can also set custom actions on an app-by-app basis and for the “Recent Apps” menu.
+    <string name="about_desc">This app unlocks the potential of your fingerprint reader, allowing you to perform
+        a variety of actions by simply by swiping on it. You can also set custom actions on an app-by-app basis and for the “Recent Apps” menu.
     </string>
     <string name="suggestions">Suggestions?</string>
     <string name="send_suggestion">Send Suggestion</string>

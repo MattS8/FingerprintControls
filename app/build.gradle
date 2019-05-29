@@ -52,5 +52,9 @@ dependencies {
     // Add dependency
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
+    // New Spinner
+    implementation 'com.github.arcadefire:nice-spinner:1.4.3'
+    implementation 'com.asksira.android:dropdownview:1.0.3'
+
     implementation 'com.google.code.gson:gson:2.8.5'
 }

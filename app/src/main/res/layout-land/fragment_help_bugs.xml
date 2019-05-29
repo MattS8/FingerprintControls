@@ -5,9 +5,11 @@
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".pages.HelpFragment"
             android:id="@+id/helpContainer"
+            tools:context=".pages.HelpFragment"
             android:background="@color/backgroundWhite">
+
+
         <ImageView
                 android:src="@mipmap/logo"
                 android:layout_width="125dp"
@@ -17,17 +19,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.0"
                 android:contentDescription="@string/desc_logo"
-                android:scaleType="fitXY" android:layout_marginTop="16dp"/>
+                android:scaleType="fitXY" app:layout_constraintHorizontal_bias="0.0" android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" android:layout_marginBottom="16dp" android:layout_marginTop="16dp"/>
         <TextView
                 android:text="@string/how_do_i_use_this_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/aboutAppTitle" app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/logo"
+                android:id="@+id/aboutAppTitle"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
                 android:textAppearance="@style/AppTheme.TextAppearance.SubHeader"
-                android:textSize="18sp"/>
+                android:textSize="18sp" app:layout_constraintStart_toEndOf="@+id/logo"
+                app:layout_constraintTop_toTopOf="@+id/logo" app:layout_constraintHorizontal_bias="0.0"/>
         <TextView
                 android:text="@string/suggestions"
                 android:layout_width="wrap_content"
@@ -41,10 +45,12 @@
                 android:layout_marginEnd="32dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toStartOf="@+id/bugsTitle"
+                app:layout_constraintEnd_toStartOf="@+id/reportBug"
                 android:layout_marginTop="32dp"
                 app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintTop_toBottomOf="@id/aboutDesc"/>
+                app:layout_constraintTop_toBottomOf="@id/aboutDesc"
+                android:visibility="gone"
+        />
         <TextView
                 android:text="@string/found_a_bug"
                 android:layout_width="wrap_content"
@@ -52,34 +58,29 @@
                 android:id="@+id/bugsTitle"
                 android:textAppearance="@style/AppTheme.TextAppearance.SubHeader"
                 android:textSize="18sp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/reportBug"
-                app:layout_constraintStart_toEndOf="@+id/suggestionsTitle"
-                android:layout_marginStart="32dp"
-                app:layout_constraintHorizontal_bias="0.5"
-                android:layout_marginTop="32dp"
                 app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view_tutorial" android:layout_marginStart="8dp"
+                app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="32dp"
+                app:layout_constraintTop_toBottomOf="@+id/aboutDesc" android:layout_marginBottom="56dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
         />
-
-
         <Button
                 android:text="@string/view_tutorial"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/view_tutorial"
-                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/view_tutorial" app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="32dp"
-                app:layout_constraintHorizontal_bias="0.5"
+                android:layout_marginEnd="32dp" app:layout_constraintHorizontal_bias="0.5"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/aboutDesc"
-                app:layout_constraintBottom_toTopOf="@+id/bugsTitle"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/aboutDesc"
+                app:layout_constraintBottom_toTopOf="@+id/bugsTitle" android:layout_marginBottom="16dp"
+                app:layout_constraintVertical_bias="0.0"
+                android:alpha="0"
+        />
         <Button
                 android:text="@string/send_suggestion"
                 android:layout_width="wrap_content"
@@ -87,24 +88,32 @@
                 android:id="@+id/sendSuggestion"
                 android:minWidth="160dp"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/suggestionsTitle"
-                app:layout_constraintHorizontal_bias="0.5"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toEndOf="@+id/suggestionsTitle"/>
+                app:layout_constraintTop_toBottomOf="@+id/reportBug"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                tools:text="@android:string/cancel"
+
+                app:layout_constraintStart_toEndOf="@+id/editText" android:layout_marginStart="8dp"/>
         <Button
                 android:text="@string/report_bug"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/reportBug"
-                android:minWidth="160dp"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/bugsTitle"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/bugsTitle"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                android:minWidth="160dp"
+                tools:text="@string/send"
+                app:layout_constraintTop_toTopOf="@+id/editText"/>
+
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -116,29 +125,30 @@
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginEnd="32dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="8dp"
                 app:layout_constraintHorizontal_bias="0.0"
-                android:gravity="center_horizontal"/>
+                app:layout_constraintStart_toEndOf="@+id/logo"/>
+
 
         <!-- Suggestion Views -->
 
         <org.angmarch.views.NiceSpinner
-                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minWidth="250dp"
                 android:spinnerMode="dropdown"
                 android:id="@+id/suggestionSpinner"
                 android:entries="@array/suggestion_types"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/editText"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/suggestionsTitle"
-                android:layout_marginEnd="32dp" android:layout_marginStart="@dimen/list_margin_start"
+                app:layout_constraintTop_toBottomOf="@+id/aboutDesc"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
-                android:visibility="gone"
                 app:layout_constraintVertical_bias="0.0"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintHorizontal_bias="0.0"
-        />
+                app:layout_constraintStart_toStartOf="@+id/aboutDesc"/>
 
         <com.kinda.mtextfield.TextFieldBoxes
                 android:layout_width="0dp"
@@ -146,7 +156,7 @@
                 android:inputType="textLongMessage"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="@dimen/list_margin_start"
-                android:layout_marginEnd="@dimen/list_margin_start"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
                 app:minCharacters="20"
                 app:hasClearButton="true"
@@ -158,10 +168,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/suggestionSpinner"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintVertical_bias="0.0"
-                android:visibility="gone"
-        >
+                app:layout_constraintEnd_toStartOf="@+id/reportBug">
 
             <com.kinda.mtextfield.ExtendedEditText
                     android:id="@+id/extended_edit_text"
@@ -171,6 +179,7 @@
                     android:layout_height="wrap_content"/>
 
         </com.kinda.mtextfield.TextFieldBoxes>
+
 
     </android.support.constraint.ConstraintLayout>
 </layout>

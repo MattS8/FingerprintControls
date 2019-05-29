@@ -5,6 +5,7 @@
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/helpContainer"
             tools:context=".pages.HelpFragment"
             android:background="@color/backgroundWhite">
 
@@ -109,5 +110,59 @@
                 android:layout_marginStart="8dp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/logo"/>
+
+
+        <!-- Suggestion Views -->
+
+        <org.angmarch.views.NiceSpinner
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:minWidth="250dp"
+                android:spinnerMode="dropdown"
+                android:id="@+id/suggestionSpinner"
+                android:entries="@array/suggestion_types"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/suggestionsTitle"
+                android:layout_marginEnd="32dp" android:layout_marginStart="@dimen/list_margin_start"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:layout_constraintVertical_bias="0.0"
+                android:layout_marginTop="8dp"
+                app:layout_constraintHorizontal_bias="0.0"
+        />
+
+        <com.kinda.mtextfield.TextFieldBoxes
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="textLongMessage"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="@dimen/list_margin_start"
+                android:layout_marginEnd="@dimen/list_margin_start"
+                android:layout_marginBottom="16dp"
+                app:minCharacters="20"
+                app:hasClearButton="true"
+                tools:text="Name"
+                android:ems="10"
+                android:id="@+id/editText"
+                app:labelText="@string/desc"
+                android:minHeight="@dimen/min_text_height"
+                app:layout_constraintTop_toBottomOf="@+id/suggestionSpinner"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                android:visibility="gone"
+        >
+
+            <com.kinda.mtextfield.ExtendedEditText
+                    android:id="@+id/extended_edit_text"
+                    android:layout_width="match_parent"
+                    android:minHeight="@dimen/min_text_height"
+                    tools:text="blah blah blah blah blah blah blah"
+                    android:layout_height="wrap_content"/>
+
+        </com.kinda.mtextfield.TextFieldBoxes>
+
+
     </android.support.constraint.ConstraintLayout>
 </layout>

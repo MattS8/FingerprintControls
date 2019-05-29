@@ -45,6 +45,12 @@
     <string name="describe_your_suggestion">Describe Your Suggestion:</string>
     <string name="desc">Description</string>
     <string name="send">send</string>
+    <string name="submit_suggestion_title">Submit a Suggestion</string>
+    <string name="submit_suggestion_desc">Please select a topic and describe your suggestion below.</string>
+    <string name="submit_bug_title">Sumbit Bug Report</string>
+    <string name="submit_but_desc">Please describe the bug below and select the severity. Thanks for helping out!
+    </string>
+    <string name="bug_severity">Bug Severity</string>
 
     <string-array name="gesture_actions">
         <item>None</item>
@@ -100,8 +106,8 @@
 
     <string-array name="bug_severity">
         <item>Critical (App crashes)</item>
-        <item>Major (App malfunctions/ Unusable)</item>
-        <item>Moderate/Low (Graphic glitches or minor hiccups)</item>
+        <item>Major (App Malfunctions/ Unusable)</item>
+        <item>Low (Graphical / Minor hiccups)</item>
     </string-array>
 
 </resources>

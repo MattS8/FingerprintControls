@@ -6,4 +6,6 @@
     <color name="colorPrimaryLight">#FFFAFAFA</color>
     <color name="backgroundLight">#ddfafafa</color>
     <color name="backgroundWhite">#FFFFFF</color>
+
+    <color name="primaryTextColorLight">#de000000</color>
 </resources>

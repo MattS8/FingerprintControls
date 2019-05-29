@@ -96,7 +96,6 @@
                         app:layout_constraintStart_toEndOf="@+id/cancelBtn" android:layout_marginStart="8dp"
                         app:layout_constraintHorizontal_bias="0.5" android:layout_marginBottom="16dp"/>
 
-
             </android.support.constraint.ConstraintLayout>
         </ScrollView>
 

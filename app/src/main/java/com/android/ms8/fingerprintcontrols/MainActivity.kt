@@ -26,6 +26,7 @@ import com.android.ms8.fingerprintcontrols.pages.HelpFragment
 import com.android.ms8.fingerprintcontrols.pages.MainOptionsFragment
 import com.android.ms8.fingerprintcontrols.service.FingerprintService
 import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.main_activity.*
 import java.lang.ref.WeakReference
@@ -108,7 +109,14 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         }
 
     override fun onResume() = super.onResume()
-        .also { config.bServiceEnabled.set(FingerprintService.getServiceObject() != null) }
+        .also {
+            FirebaseAuth.getInstance().addAuthStateListener {
+                if (it.currentUser == null)
+                    it.signInAnonymously()
+            }
+
+            config.bServiceEnabled.set(FingerprintService.getServiceObject() != null)
+        }
 
     override fun onPause() = super.onPause()
         .also { updateConfig() }

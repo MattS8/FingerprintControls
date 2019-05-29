@@ -2,25 +2,25 @@ package com.android.ms8.fingerprintcontrols.pages
 
 
 import android.content.res.Configuration
+import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.app.Fragment
 import android.transition.AutoTransition
-import android.transition.Transition
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.databinding.FragmentHelpBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.fragment_help.view.*
 import java.util.*
+import kotlin.collections.HashMap
+
 
 class HelpFragment : Fragment() {
     private lateinit var binding : FragmentHelpBinding
@@ -37,11 +37,80 @@ class HelpFragment : Fragment() {
     /* ------------------------ Firebase Functions ------------------------ */
 
     private fun sendBugReport() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val description = binding.editText.extended_edit_text.text.toString()
+        if (description.length < 20)
+            return
+        val bugTypes = resources.getStringArray(R.array.bug_severity)
+        val bugType = when (binding.suggestionSpinner.selectedItem as String) {
+            bugTypes[0] -> "Critical Bugs"
+            bugTypes[1] -> "Major Bugs"
+            bugTypes[2] -> "Minor Bugs"
+            else -> {
+                Log.e(TAG, "unknown bug type ${binding.suggestionSpinner.selectedItem}")
+                "UNKNOWN"
+            }
+        }
+
+        val bugReport = HashMap<String, Any>().apply {
+            put("DATE", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
+            put("USER", FirebaseAuth.getInstance().currentUser!!.uid)
+            put("DESCRIPTION", description)
+            put("SERIAL", Build.USER)
+            put("MODEL", Build.MODEL)
+            put("ID", Build.ID)
+            put("Manufacture", Build.MANUFACTURER)
+            put("brand", Build.BRAND)
+            put("type", Build.TYPE)
+            put("user", Build.USER)
+            put("BASE", Build.VERSION_CODES.BASE)
+            put("INCREMENTAL", Build.VERSION.INCREMENTAL)
+            put("SDK", Build.VERSION.SDK_INT)
+            put("BOARD", Build.BOARD)
+            put("BRAND" , Build.BRAND)
+            put("HOST" , Build.HOST)
+            put("FINGERPRINT", Build.FINGERPRINT)
+            put("Version Code", Build.VERSION.RELEASE)
+        }
+
+        FirebaseFirestore.getInstance().collection(bugType).add(bugReport).addOnCompleteListener { task ->
+            when {
+                task.isSuccessful -> {
+                    showHelpLayout()
+                } // TODO show success
+                else -> { } // TODO show error
+            }
+        }
     }
 
     private fun sendSuggestion() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val description = binding.editText.extended_edit_text.text.toString()
+        if (description.length < 20)
+            return
+        val suggestionTypes = resources.getStringArray(R.array.suggestion_types)
+        val suggestionType = when (binding.suggestionSpinner.selectedItem as String) {
+            suggestionTypes[0] -> "Feature Request"
+            suggestionTypes[1] -> "Usability Improvement"
+            suggestionTypes[2] -> "Language Translation"
+            suggestionTypes[3] -> "Other Suggestion"
+            else -> {
+                Log.e(TAG, "unknown suggestion type ${binding.suggestionSpinner.selectedItem}")
+                "UNKNOWN"
+            }
+        }
+
+        val suggestion = HashMap<String, Any>().apply {
+            put("DATE", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
+            put("DESCRIPTION", description)
+        }
+
+        FirebaseFirestore.getInstance().collection(suggestionType).add(suggestion).addOnCompleteListener { task ->
+            when {
+                task.isSuccessful -> {
+                    showHelpLayout()
+                } // TODO show success
+                else -> {} // TODO show error
+            }
+        }
     }
 
     /* ------------------------ OnClick Functions ------------------------ */
@@ -52,8 +121,8 @@ class HelpFragment : Fragment() {
 
     private fun reportBugClicked() {
         when (state.layoutState) {
-            LayoutState.SUGGESTION -> { showHelpLayout() }
-            LayoutState.BUG_REPORT -> { showHelpLayout() }
+            LayoutState.SUGGESTION -> { sendSuggestion() }
+            LayoutState.BUG_REPORT -> { sendBugReport() }
             LayoutState.HELP -> { showBugReportLayout() }
         }
     }

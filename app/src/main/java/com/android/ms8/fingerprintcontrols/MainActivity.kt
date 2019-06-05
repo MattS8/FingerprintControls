@@ -16,9 +16,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.ScrollView
+import com.andrognito.flashbar.Flashbar
 import com.android.ms8.fingerprintcontrols.data.Configuration
 import com.android.ms8.fingerprintcontrols.data.Configuration.Companion.CONFIG
 import com.android.ms8.fingerprintcontrols.databinding.MainActivityBinding
+import com.android.ms8.fingerprintcontrols.firestore.DatabaseFunctions
 import com.android.ms8.fingerprintcontrols.listeners.FragmentListener
 import com.android.ms8.fingerprintcontrols.listeners.ObservableListener
 import com.android.ms8.fingerprintcontrols.pages.AppActionsFragment
@@ -26,6 +28,7 @@ import com.android.ms8.fingerprintcontrols.pages.HelpFragment
 import com.android.ms8.fingerprintcontrols.pages.MainOptionsFragment
 import com.android.ms8.fingerprintcontrols.service.FingerprintService
 import com.android.ms8.fingerprintcontrols.util.ApkInfoFactory
+import com.android.ms8.fingerprintcontrols.util.FlashbarUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.main_activity.*
@@ -74,7 +77,11 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                         config.bServiceEnabled.set(false)
                         updateConfig()
                         // Show notification to user
-                        Snackbar.make(this.container, R.string.err_perm_denied, Snackbar.LENGTH_LONG).show()
+                        FlashbarUtil.buildErrorMessage(this, R.string.error, R.string.err_perm_denied,
+                                                        R.string.dismiss)
+                            .build()
+                            .show()
+                        //Snackbar.make(this.container, R.string.err_perm_denied, Snackbar.LENGTH_LONG).show()
                     }
 
                     // Permission was accepted and fingerprint hardware was found
@@ -90,18 +97,41 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
                             else -> {}
                         }
                     }
-
                     // Permission was accepted but no fingerprint hardware was found
                     else -> {
                         // Update configuration file
                         config.bServiceEnabled.set(false)
                         updateConfig()
                         // Show notification to user
-                        Snackbar.make(this.container, R.string.err_enabling, Snackbar.LENGTH_INDEFINITE)
-                            .setAction(R.string.report) {
-                                //todo Add reporting feature
-                                Snackbar.make(this.container, R.string.thanks_for_reporting, Snackbar.LENGTH_SHORT).show()
-                            }.show()
+                        FlashbarUtil.buildErrorMessage(this, R.string.error, R.string.err_enabling, R.string.report_bug)
+                            .negativeActionText(R.string.dismiss)
+                            .negativeActionTapListener(object : Flashbar.OnActionTapListener {
+                                override fun onActionTapped(bar: Flashbar) { bar.dismiss() }
+                            })
+                            .positiveActionTapListener(object : Flashbar.OnActionTapListener {
+                                override fun onActionTapped(bar: Flashbar) {
+                                    bar.dismiss()
+                                    DatabaseFunctions.sendBugReport("ERROR_ENABLING_SERVICE",
+                                        DatabaseFunctions.TYPE_ERR_CRITICAL)
+                                        .addOnCompleteListener {
+                                            when (it.isSuccessful) {
+                                                true -> {
+                                                    FlashbarUtil
+                                                        .buildNormalMessage(this@MainActivity, R.string.report_sent,
+                                                                             R.string.report_sent_desc, R.string.dismiss)
+                                                        .build().show()
+                                                }
+                                                false -> {
+                                                    FlashbarUtil
+                                                        .buildErrorMessage(this@MainActivity, R.string.error,
+                                                                            R.string.error_sending_report, R.string.dismiss)
+                                                        .build().show()
+                                                }
+                                            }
+                                        }
+                                }
+                            })
+                            .build().show()
                     }
                 }
             }

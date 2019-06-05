@@ -51,6 +51,20 @@
     <string name="submit_but_desc">Please describe the bug below and select the severity. Thanks for helping out!
     </string>
     <string name="bug_severity">Bug Severity</string>
+    <string name="error">Error</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="report_sent">Report Sent</string>
+    <string name="report_sent_desc">Thanks for sending a bug report! We\'ll take a look and get a fix out soon.</string>
+    <string name="error_sending_report">There was a problem sending the bug report. Check your internet connection and
+        try again.
+    </string>
+    <string name="suggestion_sent">Suggestion Sent</string>
+    <string name="suggestion_sent_desc">Thanks for sending a suggestion! Your input means a lot.</string>
+    <string name="error_sending_suggestion">There was a problem sending the suggestion. Please check your internet
+        connection and try again
+    </string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="coming_soon_desc">This feature will be available in a later build.</string>
 
     <string-array name="gesture_actions">
         <item>None</item>
@@ -107,7 +121,7 @@
     <string-array name="bug_severity">
         <item>Critical (App crashes)</item>
         <item>Major (App Malfunctions/ Unusable)</item>
-        <item>Low (Graphical / Minor hiccups)</item>
+        <item>Minor (Graphical / Minor hiccups)</item>
     </string-array>
 
 </resources>

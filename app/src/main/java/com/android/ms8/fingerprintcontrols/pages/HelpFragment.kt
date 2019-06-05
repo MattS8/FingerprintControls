@@ -13,8 +13,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import com.andrognito.flashbar.Flashbar
 import com.android.ms8.fingerprintcontrols.R
 import com.android.ms8.fingerprintcontrols.databinding.FragmentHelpBinding
+import com.android.ms8.fingerprintcontrols.firestore.DatabaseFunctions
+import com.android.ms8.fingerprintcontrols.util.FlashbarUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_help.view.*
@@ -40,44 +43,29 @@ class HelpFragment : Fragment() {
         val description = binding.editText.extended_edit_text.text.toString()
         if (description.length < 20)
             return
-        val bugTypes = resources.getStringArray(R.array.bug_severity)
-        val bugType = when (binding.suggestionSpinner.selectedItem as String) {
-            bugTypes[0] -> "Critical Bugs"
-            bugTypes[1] -> "Major Bugs"
-            bugTypes[2] -> "Minor Bugs"
-            else -> {
-                Log.e(TAG, "unknown bug type ${binding.suggestionSpinner.selectedItem}")
-                "UNKNOWN"
-            }
-        }
 
-        val bugReport = HashMap<String, Any>().apply {
-            put("DATE", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
-            put("USER", FirebaseAuth.getInstance().currentUser!!.uid)
-            put("DESCRIPTION", description)
-            put("SERIAL", Build.USER)
-            put("MODEL", Build.MODEL)
-            put("ID", Build.ID)
-            put("Manufacture", Build.MANUFACTURER)
-            put("brand", Build.BRAND)
-            put("type", Build.TYPE)
-            put("user", Build.USER)
-            put("BASE", Build.VERSION_CODES.BASE)
-            put("INCREMENTAL", Build.VERSION.INCREMENTAL)
-            put("SDK", Build.VERSION.SDK_INT)
-            put("BOARD", Build.BOARD)
-            put("BRAND" , Build.BRAND)
-            put("HOST" , Build.HOST)
-            put("FINGERPRINT", Build.FINGERPRINT)
-            put("Version Code", Build.VERSION.RELEASE)
-        }
+        // Get Error Endpoint
+        val bugType = DatabaseFunctions.getErrorTypeFromDropdown(context, binding.suggestionSpinner.selectedItem as String)
 
-        FirebaseFirestore.getInstance().collection(bugType).add(bugReport).addOnCompleteListener { task ->
+        // Send report and show notification on complete
+        DatabaseFunctions.sendBugReport(description, bugType).addOnCompleteListener { task ->
             when {
                 task.isSuccessful -> {
+                    binding.editText.extended_edit_text.setText("")
                     showHelpLayout()
-                } // TODO show success
-                else -> { } // TODO show error
+                    activity?.let {
+                        FlashbarUtil.buildNormalMessage(it, R.string.report_sent, R.string.report_sent_desc,
+                                                        R.string.dismiss)
+                            .build().show()
+                    }
+                }
+                else -> {
+                    activity?.let {
+                        FlashbarUtil.buildErrorMessage(it, R.string.error, R.string.error_sending_report,
+                                                       R.string.dismiss)
+                            .build().show()
+                    }
+                }
             }
         }
     }
@@ -86,29 +74,29 @@ class HelpFragment : Fragment() {
         val description = binding.editText.extended_edit_text.text.toString()
         if (description.length < 20)
             return
-        val suggestionTypes = resources.getStringArray(R.array.suggestion_types)
-        val suggestionType = when (binding.suggestionSpinner.selectedItem as String) {
-            suggestionTypes[0] -> "Feature Request"
-            suggestionTypes[1] -> "Usability Improvement"
-            suggestionTypes[2] -> "Language Translation"
-            suggestionTypes[3] -> "Other Suggestion"
-            else -> {
-                Log.e(TAG, "unknown suggestion type ${binding.suggestionSpinner.selectedItem}")
-                "UNKNOWN"
-            }
-        }
 
-        val suggestion = HashMap<String, Any>().apply {
-            put("DATE", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
-            put("DESCRIPTION", description)
-        }
+        // Get Suggestion Endpoint
+        val suggestionType = DatabaseFunctions
+                .getSuggestionTypeFromDropdown(context, binding.suggestionSpinner.selectedItem as String)
 
-        FirebaseFirestore.getInstance().collection(suggestionType).add(suggestion).addOnCompleteListener { task ->
+        // Send suggestion and show notification on complete
+        DatabaseFunctions.sendSuggestion(description, suggestionType).addOnCompleteListener { task ->
             when {
                 task.isSuccessful -> {
+                    binding.editText.extended_edit_text.setText("")
                     showHelpLayout()
-                } // TODO show success
-                else -> {} // TODO show error
+                    activity?.let {
+                        FlashbarUtil.buildErrorMessage(it, R.string.suggestion_sent, R.string.suggestion_sent_desc,
+                                                       R.string.dismiss)
+                    }
+                }
+                else -> {
+                    activity?.let {
+                        FlashbarUtil.buildErrorMessage(it, R.string.error, R.string.error_sending_suggestion,
+                            R.string.dismiss)
+                            .build().show()
+                    }
+                }
             }
         }
     }
@@ -116,7 +104,10 @@ class HelpFragment : Fragment() {
     /* ------------------------ OnClick Functions ------------------------ */
 
     private fun viewTutorialClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        activity?.let {
+            FlashbarUtil.buildNormalMessage(it, R.string.coming_soon, R.string.coming_soon_desc, R.string.dismiss)
+                .build().show()
+        }
     }
 
     private fun reportBugClicked() {

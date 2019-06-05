@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="viewModel" type="com.android.ms8.fingerprintcontrols.data.AppInfo"/>
+        <variable name="viewModel" type="com.ms8.fingerprintcontrols.data.AppInfo"/>
     </data>
 
     <LinearLayout android:layout_width="match_parent"

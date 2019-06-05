@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="appAdapter" type="com.android.ms8.fingerprintcontrols.adapters.AppInfoAdapter"/>
+        <variable name="appAdapter" type="com.ms8.fingerprintcontrols.adapters.AppInfoAdapter"/>
     </data>
 
     <LinearLayout android:layout_width="match_parent"

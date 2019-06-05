@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.android.ms8.fingerprintcontrols">
+          xmlns:tools="http://schemas.android.com/tools" package="com.ms8.fingerprintcontrols">
 
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
@@ -14,7 +14,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
         <service
-                android:name=".service.FingerprintService"
+                android:name="com.ms8.fingerprintcontrols.service.FingerprintService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
                 android:icon="@mipmap/ic_fp2"
                 android:label="@string/app_name"
@@ -29,7 +29,7 @@
         </service>
 
         <activity
-                android:name=".MainActivity"
+                android:name="com.ms8.fingerprintcontrols.MainActivity"
                 android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -11,7 +11,7 @@ apply plugin: 'io.fabric'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.android.ms8.fingerprintcontrols"
+        applicationId "com.ms8.fingerprintcontrols"
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1

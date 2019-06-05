@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:521698426234:android:0c4ac8c420599505",
+        "mobilesdk_app_id": "1:521698426234:android:520b2f693839adcb",
         "android_client_info": {
-          "package_name": "com.android.ms8.fingerprintcontrols"
+          "package_name": "com.ms8.fingerprintcontrols"
         }
       },
       "oauth_client": [
         {
-          "client_id": "521698426234-touviq143fm1r9nt2ojs2oso214k81r1.apps.googleusercontent.com",
+          "client_id": "521698426234-23hau4gv2m82gt671avsc6opfgqa90jp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android.ms8.fingerprintcontrols",
+            "package_name": "com.ms8.fingerprintcontrols",
             "certificate_hash": "65bd7871c8497cd4aa587b8d3ad1ac5a6f414e6d"
           }
         },

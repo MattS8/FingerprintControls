@@ -312,8 +312,8 @@ class FingerprintService : AccessibilityService() {
      *
      * @return <t>true</t> if className is potentially an app package name, <t>false</t> otherwise
      */
-    private fun bIsProperActivity(className: CharSequence?, packageName: CharSequence): Boolean =
-        className != null && className != "" && !className.startsWith("android.") && ApkInfoFactory.AppInfoHashMap.contains(packageName)
+    private fun bIsProperActivity(className: CharSequence?, packageName: CharSequence?): Boolean =
+        className != null && className != "" && !className.startsWith("android.") && packageName != null && ApkInfoFactory.AppInfoHashMap.contains(packageName)
 
 
     /**

@@ -246,42 +246,6 @@ class MainActivity : AppCompatActivity(), FragmentListener, ObservableListener {
         fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 
         fragTransaction.commit()
-
-        // OLD loadFragment()
-/*
-        // Find fragment for intended page
-        var fragment : Fragment? = supportFragmentManager.findFragmentByTag(getPageTitle(itemId) as String)
-
-        // Start page swap transaction
-        val fragTransaction = supportFragmentManager.beginTransaction()
-
-        // Detach current page if there is one
-        if (supportFragmentManager.primaryNavigationFragment != null)
-            fragTransaction.detach(supportFragmentManager.primaryNavigationFragment!!)
-
-        // Get a new fragment (based on item selected) if frag manager doesn't have one
-        if (fragment == null) {
-            fragment = when (itemId) {
-                R.id.navigation_main_options -> MainOptionsFragment.newInstance()
-                R.id.navigation_app_actions -> AppActionsFragment.newInstance()
-                R.id.navigation_about -> HelpFragment.newInstance()
-                else -> MainOptionsFragment.newInstance()
-            }
-            fragTransaction.add(R.id.frag_container, fragment, getPageTitle(itemId) as String)
-        }
-        else
-            fragTransaction.attach(fragment)
-
-        fragTransaction.setPrimaryNavigationFragment(fragment)
-        fragTransaction.setReorderingAllowed(true)
-
-        // Add transition animations
-        fragTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_bottom)
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-
-
-        fragTransaction.commitNowAllowingStateLoss()
-*/
     }
 
     /** Returns the title of the page corresponding to the page int resource **/
